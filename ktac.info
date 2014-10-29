@@ -1,0 +1,8 @@
+name = Ktac
+description = Ktac
+core = 7.x
+
+package = "Ktac"
+
+dependencies[] = nodejs
+dependencies[] = nodejs_ajax

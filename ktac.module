@@ -1,0 +1,170 @@
+<?php
+define("KTAC_DOMAIN_URL", "http://" . $_SERVER['HTTP_HOST']);
+define("KTAC_MODULE_LINK", drupal_get_path("module", "ktac") . "/");
+define("KTAC_MODULE_PATH", __DIR__ . "/");
+define("KTAC_CLIENT_LINK", KTAC_MODULE_LINK . "client/");
+
+
+// implements hook_init()
+function ktac_init() {
+	//drupal_add_css('sites/all/modules/ktac/client/client.css', "module", "all", false);
+	drupal_add_css(KTAC_CLIENT_LINK . 'ktacClient.css');
+	//drupal_add_css(KTAC_TOOLS_LINK . 'ktacTools.css');
+	//echo "/" . KTAC_CLIENT_LINK . 'client.css';
+	//echo KTAC_CLIENT_LINK . 'client.css';
+	//drupal_add_css(KTAC_MODULE_LINK . 'ktac.css', "file");
+	//var_dump(drupal_add_css(KTAC_CLIENT_LINK . 'client.css', "file"));
+	//var_dump(KTAC_MODULE_PATH); die;
+	//system("cd " . KTAC_MODULE_PATH . "; cd ../nodejs; nodejs server.js");
+	
+	drupal_add_js(KTAC_MODULE_LINK . 'ktacCommon.js', 'file');
+}
+
+// Implements hook_menu()
+function ktac_menu() {
+  $items['ktacClient'] = array(
+      'title' => 'Game Client',
+      'type' => MENU_NORMAL_ITEM,
+      'menu_name' => "main-menu",
+      'page callback' => 'ktacClient',
+      'theme callback' => 'ktacClientThemeName',
+      'access arguments' => array('access content'),
+  );
+  $items['ktacAjax'] = array(
+      'title' => 'Ktac Ajax',
+      'type' => MENU_CALLBACK,
+      'page callback' => 'ktacAjax',
+      'access arguments' => array('access content'),
+  );
+  
+  // $items['ktacBlenderMontageAjax'] = array(
+  		// 'title' => 'Ktac Blender Montage Ajax',
+  		// 'type' => MENU_CALLBACK,
+  		// 'page callback' => 'ktacBlenderMontageAjax',
+  		// 'access arguments' => array('access content'),
+  // );
+  
+  /*$items['ktacNodeJs'] = array(
+   'page callback' => 'ktacNodeJs',
+      //'page arguments' => array(3),
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('access content'),
+  );*/
+  return $items;
+}
+
+function ktac_preprocess_page(&$vars) {
+
+}
+
+
+
+function ktac_nodejs_message_callback($message, &$response) {
+	
+	
+	return array('ktacNodeToDrupalHandler');
+	
+	//echo "testing ktac hook message response die"; die;
+	/*$response = "testing ktac hook message response";
+
+	nodejs_send_channel_message("ktacChannel", "KtacTest", json_encode($response));
+	drupal_json_output(array('data' => array('accessGranted' => $response)));
+	drupal_exit();
+	//trigger_error($response);
+	
+	return $response;*/
+}
+
+function ktacNodeToDrupalHandler($message, &$response) {
+	watchdog('ktac', "ktacNodeToDrupalHandler code reached", array(), WATCHDOG_INFO);
+	// Tell node we got the message.
+	$response = 'ktacNodeToDrupalHandler code reached';
+}
+
+function ktacClient() {
+	
+	require_once "server/classes/KtacNodeJs.php";
+	KtacNodeJs::startServer();
+
+	require_once "client/client.php";
+	ktacClientIncludes();
+	
+  $html = file_get_contents(KTAC_CLIENT_LINK . "client.html");
+  return $html;
+}
+
+function ktacAjax() {
+
+  require_once "server/classes/KtacPacket.php";
+  require_once "server/classes/KtacSetBlockPacket.php";
+  require_once "server/classes/KtacLoadZonePacket.php";
+  require_once "server/classes/KtacActorMovePacket.php";
+  require_once "server/classes/KtacZone.php";
+
+  $response = new stdClass();
+
+  if(!isset($_POST['type'])) {
+    $response->type = "error";
+    $response->message = "missing packet type";
+    drupal_json_output($response);
+    exit;
+  }
+  $type = $_POST['type'];
+  $packet = null;
+  switch($type) {
+
+    case "KtacSetBlockPacket":
+      $packet = new KtacSetBlockPacket();
+      break;
+
+    case "KtacLoadZonePacket":
+      $packet = new KtacLoadZonePacket();
+      break;
+
+    case "KtacActorMovePacket":
+      $packet = new KtacActorMovePacket();
+      break;
+
+      // set tiletype in database
+      // add event to eventlog
+      // return success and updated eventlog
+
+    default:
+      $response->type = "error";
+      $response->message = "invalid packet type: " . $type;
+      drupal_json_output($response);
+      exit;
+  }
+  
+  $packet->process();
+
+  $output = print_r($_POST, 1);
+
+
+  drupal_json_output($output);
+  exit;
+}
+
+function ktacClientThemeName() {
+  return "ktacclient";
+}
+
+function ktacGetPost($varname, $default = "") {
+
+  if(!isset($_POST[$varname])) {
+    return $default;
+  }
+  return $_POST[$varname];
+}
+
+function ktacAjaxRequirePostVar($postVarName) {
+	$value = ktacGetPost($postVarName, null);
+	if($value === null) {
+		$response->type = "error";
+		$response->message = "missing post var " .  $postVarName;
+		drupal_json_output($response);
+		exit;
+	}
+	return $value;
+}

@@ -1,0 +1,127 @@
+<?php
+
+
+
+// hook_schema
+function ktac_schema() {
+
+
+  $schema['ktac_block'] = array(
+      'description' => 'The tiles on all the zones',
+      'fields' => array(
+          'zone' => array(
+              'description' => 'which zone the tile is on',
+              'type' => 'int',
+              'not null' => TRUE,
+          ),
+          'x' => array(
+              'description' => 'x coordinate on the zone',
+              'type' => 'int',
+              'not null' => TRUE,
+          ),
+          'y' => array(
+              'description' => 'y coordinate on the zone',
+              'type' => 'int',
+              'not null' => TRUE,
+          ),
+
+          'z' => array(
+              'description' => 'z coordinate on the zone',
+              'type' => 'int',
+              'not null' => TRUE,
+          ),
+
+          'blocktype' => array(
+              'description' => 'which kind of block is it?',
+              'type' => 'int',
+              'not null' => TRUE,
+              'unsigned' => TRUE,
+          ),
+      ),
+      'unique keys' => array(
+          'location' => array('zone', 'x', 'y', 'z'),
+      ),
+      'primary key' => array('zone', 'x', 'y', 'z'),
+  );
+
+  $schema['ktac_actor'] = array(
+      'fields' => array(
+          'id' => array(
+              'type' => 'serial',
+          ),
+          'name' => array(
+              'description' => 'visible label for the actor',
+              'type' => 'varchar',
+              'length' => 255,
+          ),
+          'zone' => array(
+              'type' => 'int',
+              'not null' => TRUE,
+          ),
+          'x' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+          'y' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+
+          'z' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+
+          'actortype' => array(
+              'type' => 'varchar',
+              'not null' => TRUE,
+              'length' => 255,
+          ),
+      ),
+      'primary key' => array('id'),
+  );
+
+  $schema['ktac_eventlog'] = array(
+      'fields' => array(
+          'id' => array(
+              'type' => 'serial',
+          ),
+          'timestamp' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+          'zone' => array(
+              'type' => 'int',
+              'not null' => TRUE,
+          ),
+          'x' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+          'y' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+
+          'z' => array(
+              'type' => 'int',
+              'length' => 11,
+              'not null' => TRUE,
+          ),
+
+          'json' => array(
+              'type' => 'text',
+              'not null' => TRUE,
+          ),
+      ),
+      'primary key' => array('id'),
+  );
+
+  return $schema;
+}
