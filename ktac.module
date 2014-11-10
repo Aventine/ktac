@@ -17,7 +17,7 @@ function ktac_init() {
 	//var_dump(KTAC_MODULE_PATH); die;
 	//system("cd " . KTAC_MODULE_PATH . "; cd ../nodejs; nodejs server.js");
 	
-	drupal_add_js(KTAC_MODULE_LINK . 'ktacCommon.js', 'file');
+	//drupal_add_js(KTAC_MODULE_LINK . 'ktacCommon.js', 'file');
 }
 
 // Implements hook_menu()
@@ -104,26 +104,28 @@ function ktacAjax() {
 
   $response = new stdClass();
 
-  if(!isset($_POST['type'])) {
+  $packetData = json_decode($_POST["packet"]);
+
+  if(!isset($packetData->type)) {
     $response->type = "error";
     $response->message = "missing packet type";
     drupal_json_output($response);
     exit;
   }
-  $type = $_POST['type'];
+  $type = $packetData->type;
   $packet = null;
   switch($type) {
 
     case "KtacSetBlockPacket":
-      $packet = new KtacSetBlockPacket();
+      $packet = new KtacSetBlockPacket($packetData);
       break;
 
     case "KtacLoadZonePacket":
-      $packet = new KtacLoadZonePacket();
+      $packet = new KtacLoadZonePacket($packetData);
       break;
 
     case "KtacActorMovePacket":
-      $packet = new KtacActorMovePacket();
+      $packet = new KtacActorMovePacket($packetData);
       break;
 
       // set tiletype in database

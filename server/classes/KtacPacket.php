@@ -4,11 +4,16 @@ class KtacPacket {
   public $packetName = "KtacPacket";
   public $requiredVars = array();
   public $vars = array();
+  public $rawData = stdClass;
+
+  function __construct($packetData) {
+    $this->rawData = $packetData;
+  }
 
   function validate() {
 
     foreach($this->requiredVars as $requiredVar) {
-      $value = $this->getPost($requiredVar, null);
+      $value = $this->rawData->$requiredVar;//getPost($requiredVar, null);
       if($value === null) {
         $this->errorResponse("missing var " . $requiredVar . ".");
       }
@@ -16,13 +21,13 @@ class KtacPacket {
     }
   }
 
-  function getPost($varname, $default = "") {
+  /*function getPost($varname, $default = "") {
 
     if(!isset($_POST[$varname])) {
       return $default;
     }
     return $_POST[$varname];
-  }
+  }*/
 
   function errorResponse($message) {
     $response = new stdClass();
@@ -35,6 +40,13 @@ class KtacPacket {
   function validateNumeric($varName, $var) {
     if(!is_numeric($var)) {
       $this->errorResponse($varName . " must be numeric, was " . $var);
+    }
+    return $var;
+  }
+  
+  function validateInteger($varName, $var) {
+    if(!is_int($var)) {
+      $this->errorResponse($varName . " must be an integer, was " . $var);
     }
     return $var;
   }

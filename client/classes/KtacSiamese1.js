@@ -78,7 +78,7 @@ KtacSiamese1.prototype.plantTree = function() {
 
 KtacSiamese1.prototype.till = function(block) {
   
-  if(!(block instanceof KtacTerrainCube)) {
+  if(!(block instanceof KtacBlock)) {
     this.showBubbleMessage("That's not a block, can't till");
     return;
   }
@@ -89,14 +89,14 @@ KtacSiamese1.prototype.till = function(block) {
   var action = new KtacAction("Tilling");
   action.setDuration(10); // in ticks
   action.setSuccessCallback(KtacFunctions.createBoundedWrapper({block: block}, function() {
-    block.setType(KtacDirtCube);
+    block.setType(KtacDirtBlock);
   }));
   this.queueAction(action);
 };
 
 KtacSiamese1.prototype.setToGrass = function(block) {
   
-  if(!(block instanceof KtacTerrainCube)) {
+  if(!(block instanceof KtacBlock)) {
     this.showBubbleMessage("That's not a block, can't till");
     return;
   }
@@ -107,7 +107,7 @@ KtacSiamese1.prototype.setToGrass = function(block) {
   var action = new KtacAction("Planting Grass");
   action.setDuration(10); // in ticks
   action.setSuccessCallback(KtacFunctions.createBoundedWrapper({block: block}, function() {
-    block.setType(KtacGrassCube1);
+    block.setType(KtacGrassBlock);
   }));
   this.queueAction(action);
 };

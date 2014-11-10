@@ -7,9 +7,13 @@ function ktacClientIncludes() {
 	);
 	
 	$clientJavascriptClasses = array(
+	  "KtacConfig",
 	  "KtacFunctions",
+	  "KtacLocation",
 	  "KtacConsole",
 	  "KtacPacket",
+	  "KtacLoadZonePacket",
+	  "KtacSetBlockPacket",
 		"KtacCameraControls",
 		"KtacHighlight",
 		"KtacBlendAnim",
@@ -17,12 +21,13 @@ function ktacClientIncludes() {
 		"KtacBubble",
 		"KtacActor",
 		"KtacBoundingBox",
-		"KtacTerrainCube",
-		"KtacUndefinedCube",
-		"KtacGrassCube1",
-		"KtacDirtCube",
+		"KtacBlock",
+		"KtacUndefinedBlock",
+		"KtacGrassBlock",
+		"KtacDirtBlock",
 		"KtacSiamese1",
 		"KtacTree1",
+		"KtacWorld",
 	);
 	
 	foreach($clientJavascriptLibraries as $libName) {

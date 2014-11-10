@@ -8,27 +8,28 @@ class KtacLoadZonePacket extends KtacPacket {
   function process() {
     parent::validate();
 
-    $zone = $this->validateNumeric("zone", $this->vars['zone']);
+    $zoneId = $this->validateNumeric("zone", $this->vars['zone']);
 
-    $zone = new KtacZone($zone);
+    $zone = new KtacZone($zoneId);
 
-    $tiles = array();
-    foreach($zone->tiles as $x => $xtiles) {
-      foreach($xtiles as $y => $ytiles) {
-        foreach($ytiles as $z => $tiletype) {
-          $tile = new stdClass();
-          $tile->x = $x;
-          $tile->y = $y;
-          $tile->z = $z;
-          $tile->tiletype = $tiletype;
-          $tiles[] = $tile;
+    $blocks = array();
+    foreach($zone->blocks as $x => $xblocks) {
+      foreach($xblocks as $y => $yblocks) {
+        foreach($yblocks as $z => $blocktype) {
+          $block = new stdClass();
+          $block->zone = $zoneId;
+          $block->x = $x;
+          $block->y = $y;
+          $block->z = $z;
+          $block->blocktype = $blocktype;
+          $blocks[] = $block;
         }
       }
     }
 
     $response = new stdClass();
     $response->type = "success";
-    $response->tiles = $tiles;
+    $response->blocks = $blocks;
     drupal_json_output($response);
     exit;
   }

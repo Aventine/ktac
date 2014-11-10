@@ -4,12 +4,12 @@ function KtacPacket() {
 }
 
 KtacPacket.prototype.send = function() {
-  jQuery.post("/ktacAjax", this.content, function(response) {
+  jQuery.post("/ktacAjax", {packet: JSON.stringify(this.content)}, function(response) {
     
     
-    console.outputMessage("KtacPacket AJAX response: ");
+    //ktacConsole.outputMessage("KtacPacket AJAX response: ");
     //for(var i in response) {
-      console.outputMessage(response.toSource());
+      //ktacConsole.outputMessage(response.toSource());
     //}
   }, "json");
 };

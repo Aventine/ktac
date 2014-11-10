@@ -28,12 +28,14 @@ var shadowsOn = false;
 var WORLD_SIZE_X = 16;
 var WORLD_SIZE_Z = 16;
 
-var console = new KtacConsole();
+var world1 = new KtacWorld();
+
+var ktacConsole = new KtacConsole();
 
 
 
 jQuery(document).ready(function() {
-  console.init();
+  ktacConsole.init();
 	
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,13 +49,16 @@ jQuery(document).ready(function() {
 	document.body.appendChild(renderer.domElement);
 
 	
-	//var cube1 = new KtacGrassCube1();
-	var tiles = new Array();
+	$packet = new KtacLoadZonePacket(0);
+	$packet.send();
+	
+	//var cube1 = new KtacGrassBlock();
+	/*var tiles = new Array();
 	for (x = 0; x < WORLD_SIZE_X; x++) {
 		for (z = 0; z < WORLD_SIZE_Z; z++) {
-			tiles.push(new KtacUndefinedCube({x: x, y: -0.5, z: z}));
+			//tiles.push(new KtacUndefinedBlock(new KtacLocation(0, x, -0.5, z)));
 		}
-	} 
+	} */
 	
 	
 	var siamese1 = new KtacSiamese1();
@@ -228,13 +233,21 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
     switch(message.data.subject) {
     
       case "KtacSetBlockPacket" :
-        console.outputMessage("recieved KtacSetBlockPacket stub");
-        //var packet = jQuery.parseJSON(message.data.body);
-        //game.map.tiles[packet.loc.x][packet.loc.y].setType(packet.tiletype);
+        ktacConsole.outputMessage("recieved KtacSetBlockPacket");
+        var packet = jQuery.parseJSON(message.data.body);
+        var blockClass = KtacBlock.getBlockClassFromId(packet.setTo);
+        block = world1.getBlock(packet.loc);
+        if(block == null) {
+          
+          var block = new blockClass(packet.loc);
+          world1.addBlock(block);
+        } else {
+          block.setType(blockClass, true);
+        }
         break;
         
       case "KtacActorMovePacket" :
-        console.outputMessage("recieved KtacActorMovePacket stub");
+        ktacConsole.outputMessage("recieved KtacActorMovePacket stub");
         // var packet = message.data.body;
         // var action = new KtacAction("moveTo");
         // action.setAnimation("walk");
