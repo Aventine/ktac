@@ -77,8 +77,8 @@ KtacBlock.prototype.destruct = function() {
 };
 
 // static method
-KtacBlock.registerBlockType = function(blockClass, blockId) {
-  KtacBlock.blockClassesById[blockId] = blockClass;
+KtacBlock.registerBlockType = function(blockClass) {
+  KtacBlock.blockClassesById[blockClass.blockId] = blockClass;
 };
 
 // static method

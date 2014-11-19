@@ -18,7 +18,8 @@ function KtacTree1() {
 	this.init();
 } KtacTree1.prototype = Object.create(KtacActor.prototype);
 
-
+KtacTree1.actorTypeId = 1;
+KtacActor.registerActorType(KtacTree1);
 
 KtacTree1.prototype.onGraphicsLoaded = function(geometry, materials) {
 	

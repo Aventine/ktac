@@ -31,7 +31,7 @@ var WORLD_SIZE_Z = 16;
 var world1 = new KtacWorld();
 
 var ktacConsole = new KtacConsole();
-
+var playerActor;
 
 
 jQuery(document).ready(function() {
@@ -61,7 +61,7 @@ jQuery(document).ready(function() {
 	} */
 	
 	
-	var siamese1 = new KtacSiamese1();
+	//var playerActor = new KtacSiamese1();
 
 	var tree1 = new KtacTree1();
 	//tree1.setLocation({ x: 2, y: 0, z: 2 });
@@ -144,28 +144,28 @@ jQuery(document).ready(function() {
 	jQuery("#mouseContextMenu .moveHere").click(function() {
 		jQuery("#mouseContextMenu").addClass("hidden");
 		isMouseContextMenuOpen = false;
-		var goalLoc = {x: KTAC_HIGHLIGHTED_ACTOR.location.x, y: 0, z: KTAC_HIGHLIGHTED_ACTOR.location.z};
-		siamese1.moveTo(goalLoc);
+		var goalLoc = new KtacLocation(0, KTAC_HIGHLIGHTED_ACTOR.location.x, 0, KTAC_HIGHLIGHTED_ACTOR.location.z);
+		playerActor.moveTo(goalLoc);
 	});
 	jQuery("#mouseContextMenu .plantTreeHere").click(function() {
 		jQuery("#mouseContextMenu").addClass("hidden");
 		isMouseContextMenuOpen = false;
-		var goalLoc = {x: KTAC_HIGHLIGHTED_ACTOR.location.x, y: 0, z: KTAC_HIGHLIGHTED_ACTOR.location.z};
-		siamese1.moveTo(goalLoc);
-		siamese1.plantTree();
+    var goalLoc = new KtacLocation(0, KTAC_HIGHLIGHTED_ACTOR.location.x, 0, KTAC_HIGHLIGHTED_ACTOR.location.z);
+		playerActor.moveTo(goalLoc);
+		playerActor.plantTree();
 	});
 	jQuery("#mouseContextMenu .removeActor").click(function() {
 		jQuery("#mouseContextMenu").addClass("hidden");
 		isMouseContextMenuOpen = false;
 		
-		if(KTAC_HIGHLIGHTED_ACTOR == siamese1) {
-			siamese1.showBubbleMessage("Dont erase yourself!");
+		if(KTAC_HIGHLIGHTED_ACTOR == playerActor) {
+			playerActor.showBubbleMessage("Dont erase yourself!");
 			return;
 		}
 		
-		var goalLoc = {x: KTAC_HIGHLIGHTED_ACTOR.location.x, y: 0, z: KTAC_HIGHLIGHTED_ACTOR.location.z};
-		siamese1.moveTo(goalLoc);
-		siamese1.removeActor(KTAC_HIGHLIGHTED_ACTOR);
+    var goalLoc = new KtacLocation(0, KTAC_HIGHLIGHTED_ACTOR.location.x, 0, KTAC_HIGHLIGHTED_ACTOR.location.z);
+		playerActor.moveTo(goalLoc);
+		playerActor.removeActor(KTAC_HIGHLIGHTED_ACTOR);
 		
 	});
 	
@@ -173,14 +173,14 @@ jQuery(document).ready(function() {
     jQuery("#mouseContextMenu").addClass("hidden");
     isMouseContextMenuOpen = false;
 
-    siamese1.till(KTAC_HIGHLIGHTED_ACTOR);
+    playerActor.till(KTAC_HIGHLIGHTED_ACTOR);
   });
   
   jQuery("#mouseContextMenu .plantGrassHere").click(function() {
     jQuery("#mouseContextMenu").addClass("hidden");
     isMouseContextMenuOpen = false;
 
-    siamese1.setToGrass(KTAC_HIGHLIGHTED_ACTOR);
+    playerActor.setToGrass(KTAC_HIGHLIGHTED_ACTOR);
   });
 	
 });
@@ -233,7 +233,7 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
     switch(message.data.subject) {
     
       case "KtacSetBlockPacket" :
-        ktacConsole.outputMessage("recieved KtacSetBlockPacket");
+        //ktacConsole.outputMessage("recieved KtacSetBlockPacket");
         var packet = jQuery.parseJSON(message.data.body);
         var blockClass = KtacBlock.getBlockClassFromId(packet.setTo);
         block = world1.getBlock(packet.loc);
@@ -246,14 +246,19 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
         }
         break;
         
-      case "KtacActorMovePacket" :
-        ktacConsole.outputMessage("recieved KtacActorMovePacket stub");
+      case "KtacActorSavePacket" :
+        ktacConsole.outputMessage("recieved KtacActorSavePacket stub");
         // var packet = message.data.body;
         // var action = new KtacAction("moveTo");
         // action.setAnimation("walk");
         // action.setGoalLocation(packet.goalLocation);
         // action.isaReplication = true;
         // controlledActor.queueAction(action);
+        break;
+        
+      case "KtacDebugPacket" :
+        var packet = jQuery.parseJSON(message.data.body);
+        ktacConsole.outputMessage(packet.message);
         break;
         
       default:

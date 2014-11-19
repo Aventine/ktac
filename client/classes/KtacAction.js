@@ -8,7 +8,14 @@ function KtacAction(name) {
 	this.successCallback = null; // an anonymous function that accepts the KtacActor that did the action
 	//this.failureCallback = null;
 	this.isaReplication = false; // is this action invoked by the server, instead of having been initiated on the client?
+	
+	this.id = KtacAction.nextId;
+	KtacAction.nextId++;
+	
+	this.created = Date.now();
 }
+
+KtacAction.nextId = 1;
 
 KtacAction.prototype.setGoalLocation = function(loc){
 	this.goalLocation = loc;

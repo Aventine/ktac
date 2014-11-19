@@ -2,24 +2,27 @@
 class KtacSetBlockPacket extends KtacPacket {
 
   public $packetName = "KtacSetBlockPacket";
-  public $requiredVars = array("loc", "setTo");
+  //public $requiredVars = array("loc", "setTo");
 
 
   function process() {
-    parent::validate();
+    //parent::validate();
 //$this->errorResponse("debug test: " . print_r($this->vars, 1));
-    $zone = $this->validateInteger("loc zone", $this->vars["loc"]->zone);
-    $x = $this->validateInteger("loc x", $this->vars["loc"]->x);
-    $y = $this->validateInteger("loc y", $this->vars["loc"]->y);
-    $z = $this->validateInteger("loc z", $this->vars["loc"]->z);
-    $blocktype = $this->validateInteger("setTo", $this->vars["setTo"]);
+    // $zone = $this->validateInteger("loc zone", $this->vars["loc"]->zone);
+    // $x = $this->validateInteger("loc x", $this->vars["loc"]->x);
+    // $y = $this->validateInteger("loc y", $this->vars["loc"]->y);
+    // $z = $this->validateInteger("loc z", $this->vars["loc"]->z);
+    // $blocktype = $this->validateInteger("setTo", $this->vars["setTo"]);
+
+    $loc = new KtacLocation($this->rawData->loc);
+    $blocktype = KtacValidation::requireInteger($this->rawData->setTo);
 
     $result = db_select('ktac_block', 'blocktype')
     ->fields('blocktype')
-    ->condition('zone', $zone, '=')
-    ->condition('x', $x, '=')
-    ->condition('y', $y, '=')
-    ->condition('z', $z, '=')
+    ->condition('zone', $loc->zone, '=')
+    ->condition('x', $loc->x, '=')
+    ->condition('y', $loc->y, '=')
+    ->condition('z', $loc->z, '=')
     ->execute()
     ->fetchAssoc();
 
@@ -52,7 +55,7 @@ class KtacSetBlockPacket extends KtacPacket {
 
     // actually set the tile
     db_merge('ktac_block')
-    ->key(array('zone' => $zone, "x" => $x, "y" => $y, "z" => $z))
+    ->key(array('zone' => $loc->zone, "x" => $loc->x, "y" => $loc->y, "z" => $loc->z))
     ->fields(array(
     'blocktype' => $blocktype
     ))
@@ -60,9 +63,14 @@ class KtacSetBlockPacket extends KtacPacket {
 
     //ktacTestNodeJsPushTilled();
 
+    $announce = new KtacPushPacket();
+    $announce->packetName = "KtacSetBlockPacket";
+    $announce->loc = $loc;
+    $announce->setTo = $blocktype;
+    $announce->send();
 
-    nodejs_send_channel_message("ktacChannel", "KtacSetBlockPacket", json_encode($this->vars));
-    drupal_json_output(array('data' => array('accessGranted' => 'KtacSetBlockPacket success')));
+    //nodejs_send_channel_message("ktacChannel", "KtacSetBlockPacket", json_encode($this->vars));
+    //drupal_json_output(array('data' => array('accessGranted' => 'KtacSetBlockPacket success')));
     //drupal_exit();
     exit;
     

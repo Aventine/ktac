@@ -95,56 +95,48 @@ function ktacClient() {
 }
 
 function ktacAjax() {
-
+  require_once "server/classes/KtacValidation.php";
+  require_once "server/classes/KtacLocation.php";
+  require_once "server/classes/KtacActor.php";
   require_once "server/classes/KtacPacket.php";
   require_once "server/classes/KtacSetBlockPacket.php";
   require_once "server/classes/KtacLoadZonePacket.php";
-  require_once "server/classes/KtacActorMovePacket.php";
+  require_once "server/classes/KtacActorSavePacket.php";
   require_once "server/classes/KtacZone.php";
+  require_once "server/classes/KtacPushPacket.php";
+  require_once "server/classes/KtacDebugPacket.php";
 
   $response = new stdClass();
 
-  $packetData = json_decode($_POST["packet"]);
+  $packetType = ktacAjaxRequirePostVar("packetType");
+  $packetContent = ktacAjaxRequirePostVar("packetContent");
 
-  if(!isset($packetData->type)) {
-    $response->type = "error";
-    $response->message = "missing packet type";
-    drupal_json_output($response);
-    exit;
-  }
-  $type = $packetData->type;
+  
   $packet = null;
-  switch($type) {
+  switch($packetType) {
 
     case "KtacSetBlockPacket":
-      $packet = new KtacSetBlockPacket($packetData);
+      $packet = new KtacSetBlockPacket($packetContent);
       break;
 
     case "KtacLoadZonePacket":
-      $packet = new KtacLoadZonePacket($packetData);
+      $packet = new KtacLoadZonePacket($packetContent);
       break;
 
-    case "KtacActorMovePacket":
-      $packet = new KtacActorMovePacket($packetData);
+    case "KtacActorSavePacket":
+      $packet = new KtacActorSavePacket($packetContent);
       break;
-
-      // set tiletype in database
-      // add event to eventlog
-      // return success and updated eventlog
 
     default:
-      $response->type = "error";
-      $response->message = "invalid packet type: " . $type;
-      drupal_json_output($response);
-      exit;
+      ktacAjaxErrorBailout("invalid packet type: " . $packetType);
   }
   
   $packet->process();
 
-  $output = print_r($_POST, 1);
+  //$output = print_r($_POST, 1);
 
 
-  drupal_json_output($output);
+  //drupal_json_output($output);
   exit;
 }
 
@@ -163,10 +155,14 @@ function ktacGetPost($varname, $default = "") {
 function ktacAjaxRequirePostVar($postVarName) {
 	$value = ktacGetPost($postVarName, null);
 	if($value === null) {
-		$response->type = "error";
-		$response->message = "missing post var " .  $postVarName;
-		drupal_json_output($response);
-		exit;
+	  ktacAjaxErrorBailout("Missing post var " .  $postVarName);
 	}
 	return $value;
 }
+
+function ktacAjaxErrorBailout($message) {
+  $error = "Ktac Ajax Error: " . $message;
+  throw new Exception($error);
+  //print $error;
+  //exit;
+};

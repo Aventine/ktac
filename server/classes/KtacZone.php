@@ -1,7 +1,8 @@
 <?php
 class KtacZone {
 
-  public $blocks = null;
+  public $blocks = array();
+  public $actors = array();
 
   function __construct($zoneId) {
     
@@ -20,5 +21,18 @@ class KtacZone {
       }
       $this->blocks[$result["x"]][$result["y"]][$result["z"]] = $result['blocktype'];
     }
+    
+    $results = db_select('ktac_actor')
+    ->fields('ktac_actor')
+    ->condition('zone', $zoneId, '=')
+    ->execute();
+
+    $this->actors = array();
+    while($result = $results->fetchAssoc()) {
+      $actor = new KtacActor();
+      $actor->populateFromDbResult($result);
+      $this->actors[] = $actor;
+    }
+        
   }
 }

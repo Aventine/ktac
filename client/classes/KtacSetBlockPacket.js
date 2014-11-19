@@ -3,7 +3,7 @@ function KtacSetBlockPacket(loc, blockId) {
   
   KtacPacket.call(this);
   
-  this.content.type = "KtacSetBlockPacket";
+  this.type = "KtacSetBlockPacket";
   this.content.loc = loc;
   this.content.setTo = blockId;
   

@@ -3,7 +3,7 @@ function KtacSiamese1() {
 	
 	KtacActor.call(this, this.type);
 	
-	this.location = {x: 0, y: 0, z: 0};
+	//this.location = {x: 0, y: 0, z: 0};
 	this.scale = {x: 1, y: 1, z: 1};
 	this.graphicsJson = KTAC_CLIENT_LINK + "assets/Siamese1/catAnim_withwalk.js";
 	this.texture = KTAC_CLIENT_LINK + "assets/Siamese1/cat_tex512.png";
@@ -15,6 +15,9 @@ function KtacSiamese1() {
 	
 	this.init();
 } KtacSiamese1.prototype = Object.create(KtacActor.prototype);
+
+KtacSiamese1.actorTypeId = 2;
+KtacActor.registerActorType(KtacSiamese1);
 
 //KtacSiamese1.prototype.init = function() {
 //	
@@ -64,11 +67,10 @@ KtacSiamese1.prototype.plantTree = function() {
 	action.setDuration(20); // in ticks
 	action.setSuccessCallback(function(actor) {
 		var tree = new KtacTree1("planted tree");
-		tree.setLocation({
-			x : actor.location.x,
-			y : 0,
-			z : actor.location.z
-		});
+		var treeLocation = actor.location.clone();
+		treeLocation.y = 0;
+		tree.setLocation(treeLocation);
+		tree.save();
 		tree.growFromSmall();
 		//tree.spawn();
 		//game.actors.push(grass);
@@ -83,7 +85,8 @@ KtacSiamese1.prototype.till = function(block) {
     return;
   }
   
-  var goalLoc = {x: block.location.x, y: 0, z: block.location.z};
+  var goalLoc = block.location.clone();
+  goalLoc.y = 0;
   this.moveTo(goalLoc);
   
   var action = new KtacAction("Tilling");
@@ -101,7 +104,8 @@ KtacSiamese1.prototype.setToGrass = function(block) {
     return;
   }
   
-  var goalLoc = {x: block.location.x, y: 0, z: block.location.z};
+  var goalLoc = block.location.clone();
+  goalLoc.y = 0;
   this.moveTo(goalLoc);
   
   var action = new KtacAction("Planting Grass");

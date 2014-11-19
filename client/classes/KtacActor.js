@@ -6,9 +6,11 @@ var INIT_STATE_READY = "ready"; // all done and ready
 // subclasses must call this.init() in their constructor
 
 function KtacActor(name) {
+  this.id = 1;
+  this.type = 0;
 	this.name = name;
 	
-	this.location = {x: 0, y: 0, z: 0};
+	this.location = new KtacLocation(0,0,0,0);
 	this.facingLongitude = 0; // in degrees
 	this.speed = 0.1; // tiles per tick
 	this.turnSpeed = 5; // degrees per tick
@@ -27,8 +29,11 @@ function KtacActor(name) {
 	this.bubble = new KtacBubble(this, "");
 	//this.isMoving = false;
 	//this.velocity = {x: 0, y: 0, z: 0}; // used for moving the mesh each frame between ticks
+  this.goalLocation = null; // where this actor is trying to be
 	this.meshGoalLocation = null; // where to move the mesh to each frame, to arrive at roughly the next tick
 };
+
+KtacActor.actorClassesByTypeId = new Array();
 
 KtacActor.prototype.init = function() {
 	if(this.graphicsJson != null) {
@@ -108,48 +113,13 @@ KtacActor.prototype.moveToward = function(dest) {
 	//this.velocity = {x: 0, y: 0, z: 0};
 	
 	var nextStep = KtacFunctions.getStepToward(here, dest, this.speed);
-	
-//	if(dest.x < here.x) {
-//		nextStep.x -= this.speed;
-//		this.velocity.x = -this.speed;
-//		if(nextStep.x < dest.x){
-//			nextStep.x = dest.x;
-//		}
-//	}
-//	else if(dest.x > here.x) {
-//		nextStep.x += this.speed;
-//		this.velocity.x = this.speed;
-//		if(nextStep.x > dest.x){
-//			nextStep.x = dest.x;
-//		}
-//	}
-//	if(dest.z < here.z) {
-//		nextStep.z -= this.speed;
-//		this.velocity.z = -this.speed;
-//		if(nextStep.z < dest.z){
-//			nextStep.z = dest.z;
-//		}
-//	}
-//	else if(dest.z > here.z) {
-//		nextStep.z += this.speed;
-//		this.velocity.z = this.speed;
-//		if(nextStep.z > dest.z){
-//			nextStep.z = dest.z;
-//		}
-//	}
-	
-	
-	
-//	if(this.facingDirection != direction) {
-//		this.facingDirection = direction;
-//		this.currentAnimation = this.animationMap.get({action: "walk", "direction": direction});
-//	}
 
 	if (nextStep.x == dest.x && nextStep.z == dest.z) {
 		this.animations["walk"].stop();
 		this.animations["still"].play();
 		this.meshGoalLocation = null;
 		this.setLocation(dest);
+		this.goalLocation = null;
 		return true; // you have arrived.
 	}
 
@@ -207,19 +177,19 @@ KtacActor.prototype.progressCurrentAction = function() {
 		
 		if(action.goalLocation != null) {
 			
+			this.goalLocation = action.goalLocation;
+			
 			this.playAnimation("walk");
 			//this.isMoving = true;
 			
-			if(!action.isaReplication) {
-        var packet = new KtacPacket();
-        packet.content.type = "KtacActorMovePacket";
-        packet.content.goalLocation = action.goalLocation;
-        packet.content.goalLocation.zone = 0;
-        packet.send();
-      }
+			
 		}
 		
 		this.bubble.setHtml(this.name + "<br>" + action.name);
+		
+		if(!action.isaReplication) {
+      this.save(); // to get this.goalLocation to other clients
+    }
 		
 		action.started = true;
 	}
@@ -423,4 +393,20 @@ KtacActor.prototype.destruct = function() {
 	scene1.remove(this.mesh);
 	KtacFunctions.removeFromArray(this, scene1.actors);
 	this.boundingBox.destruct();
+};
+
+// create in database on server
+KtacActor.prototype.save = function() {
+  var packet = new KtacActorSavePacket(this);
+  packet.send();
+};
+
+// static method
+KtacActor.registerActorType = function(actorClass) {
+  KtacActor.actorClassesByTypeId[actorClass.actorTypeId] = actorClass;
+};
+
+// static method
+KtacActor.getActorClassFromTypeId = function(actorTypeId) {
+  return KtacActor.actorClassesByTypeId[actorTypeId];
 };

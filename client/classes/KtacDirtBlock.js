@@ -10,4 +10,4 @@ function KtacDirtBlock(loc) {
 } KtacDirtBlock.prototype = Object.create(KtacBlock.prototype);
 
 KtacDirtBlock.blockId = 1;
-KtacBlock.registerBlockType(KtacDirtBlock, 1);
+KtacBlock.registerBlockType(KtacDirtBlock);

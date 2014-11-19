@@ -20,6 +20,7 @@ function ktacClientIncludes() {
 		"KtacAction",
 		"KtacBubble",
 		"KtacActor",
+		"KtacActorSavePacket",
 		"KtacBoundingBox",
 		"KtacBlock",
 		"KtacUndefinedBlock",

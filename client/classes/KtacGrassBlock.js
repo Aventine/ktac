@@ -10,4 +10,4 @@ function KtacGrassBlock(loc) {
 } KtacGrassBlock.prototype = Object.create(KtacBlock.prototype);
 
 KtacGrassBlock.blockId = 2;
-KtacBlock.registerBlockType(KtacGrassBlock, 2);
+KtacBlock.registerBlockType(KtacGrassBlock);

@@ -2,13 +2,19 @@
 class KtacLoadZonePacket extends KtacPacket {
 
   public $packetName = "KtacLoadZonePacket";
-  public $requiredVars = array("zone");
+  // public $validation = array(
+    // "zoneId" => "validInteger"
+  // );
+  
+  public $zoneId;
+  
+  //public $requiredVars = array("zone");
 
 
   function process() {
-    parent::validate();
+    //parent::validate();
 
-    $zoneId = $this->validateNumeric("zone", $this->vars['zone']);
+    $zoneId = KtacValidation::requireInteger($this->rawData->zoneId);
 
     $zone = new KtacZone($zoneId);
 
@@ -27,9 +33,12 @@ class KtacLoadZonePacket extends KtacPacket {
       }
     }
 
+
+
     $response = new stdClass();
     $response->type = "success";
     $response->blocks = $blocks;
+    $response->actors = $zone->actors;
     drupal_json_output($response);
     exit;
   }
