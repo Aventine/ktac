@@ -8,6 +8,3 @@ function KtacDirtBlock(loc) {
 
   this.init();
 } KtacDirtBlock.prototype = Object.create(KtacBlock.prototype);
-
-KtacDirtBlock.blockId = 1;
-KtacBlock.registerBlockType(KtacDirtBlock);

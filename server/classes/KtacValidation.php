@@ -2,12 +2,13 @@
 
 class KtacValidation {
   static function requireInteger($value) {
-    if(!is_int($value)) {
+    $asInt = (int)$value;
+    if($value != $asInt) {
       $message = "Integer required, was " . htmlentities($value);     
       self::errorOut($message);
     }
     
-    return $value;
+    return $asInt;
   }
   
   static function requireName($value) {

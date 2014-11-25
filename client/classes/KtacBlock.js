@@ -75,7 +75,7 @@ KtacBlock.prototype.destruct = function() {
   //KtacFunctions.removeFromArray(this, scene1.actors);
   this.boundingBox.destruct();
 };
-
+/*
 // static method
 KtacBlock.registerBlockType = function(blockClass) {
   KtacBlock.blockClassesById[blockClass.blockId] = blockClass;
@@ -84,4 +84,15 @@ KtacBlock.registerBlockType = function(blockClass) {
 // static method
 KtacBlock.getBlockClassFromId = function(blockId) {
   return KtacBlock.blockClassesById[blockId];
+};
+*/
+KtacBlock.getTypeId = function() {
+  var className = this.constructor.name;
+  var blockTypeId = jQuery.inArray(className, KTAC_CONFIG.blockTypes);
+  return blockTypeId;
+};
+
+KtacBlock.getClassByTypeId = function(blockTypeId) {
+  var className = KTAC_CONFIG.blockTypes[blockTypeId];
+  return KtacFunctions.getClassFromString(className); 
 };

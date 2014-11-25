@@ -6,7 +6,7 @@ function KtacActorSavePacket(actor) {
   //this.content.actorLocation = actor.location;
   this.content.actor = new Object();
   this.content.actor.id = actor.id;
-  this.content.actor.type = 0;
+  this.content.actor.typeId = actor.getTypeId();
   this.content.actor.name = actor.name;
   if(actor.goalLocation) {
     this.content.actor.location = actor.goalLocation;

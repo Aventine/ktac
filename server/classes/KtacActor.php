@@ -31,7 +31,7 @@ class KtacActor {
   
   function populateFromDbResult($result) {
     $this->id = $result["id"];
-    $this->type = $result["type"];
+    $this->type = $result["actortype"];
     $this->name = $result["name"];
     $this->location = new KtacLocation($result["zone"], $result["x"], $result["y"], $result["z"]);
   }
@@ -40,15 +40,14 @@ class KtacActor {
     //$js = json_decode($json);
     $js = $json;
     $this->id = KtacValidation::requireInteger($js->id);
-    $this->type = KtacValidation::requireInteger($js->type);
+    $this->type = KtacValidation::requireInteger($js->typeId);
     $this->name = KtacValidation::requireName($js->name);
     $this->location = new KtacLocation($js->location);
   }
   
   function save() {
     
-    //$debug = new KtacDebugPacket("saving with id " . $this->id);
-    //$debug->send();
+    //$debug = new KtacDebugPacket("saving with id " . $this->id . " and actortype " . $this->type); $debug->send();
     
     db_merge('ktac_actor')
     ->key(array(

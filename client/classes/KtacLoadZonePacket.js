@@ -13,7 +13,7 @@ KtacLoadZonePacket.prototype.populate = function(response) {
 
   for(var i in blocks) {
     var blockId = blocks[i].blocktype;
-    var blockClass = KtacBlock.getBlockClassFromId(blockId);
+    var blockClass = KtacFunctions.getClassFromString(KTAC_CONFIG.blockTypes[blockId]);
     var blockLocation = new KtacLocation(blocks[i].zone, blocks[i].x, blocks[i].y, blocks[i].z);
     var block = new blockClass(blockLocation);
     world1.addBlock(block);
@@ -35,10 +35,12 @@ KtacLoadZonePacket.prototype.populate = function(response) {
   var serverActors = response.actors;
   var assignedPlayerActor = false;
   for (i in serverActors) {
-    var actor = new KtacSiamese1();
+    var actorClass = KtacActor.getClassByTypeId(serverActors[i].type);
+    var actor = new actorClass();
+    actor.id = serverActors[i].id;
     var serverLoc = serverActors[i].location;
     actor.setLocation(new KtacLocation(serverLoc.zone, serverLoc.x, serverLoc.y, serverLoc.z));
-    if(!assignedPlayerActor) {
+    if(!assignedPlayerActor && actor instanceof KtacSiamese1) {
       playerActor = actor;
       assignedPlayerActor = true;
     }

@@ -117,3 +117,7 @@ KtacFunctions.toScreenXY = function(pos3D) {
 KtacFunctions.isNumber = function(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 };
+
+KtacFunctions.getClassFromString = function(className) {
+   return window[className];
+};

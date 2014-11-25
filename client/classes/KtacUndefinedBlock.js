@@ -8,6 +8,3 @@ function KtacUndefinedBlock(loc) {
 
   this.init();
 } KtacUndefinedBlock.prototype = Object.create(KtacBlock.prototype);
-
-KtacUndefinedBlock.blockId = 0;
-KtacBlock.registerBlockType(KtacUndefinedBlock);

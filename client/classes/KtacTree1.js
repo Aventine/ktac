@@ -1,4 +1,5 @@
 function KtacTree1() {
+  this.className = "KtacTree1";
 	this.type = "Tree1";
 	
 	KtacActor.call(this, this.type);
@@ -17,9 +18,6 @@ function KtacTree1() {
 	
 	this.init();
 } KtacTree1.prototype = Object.create(KtacActor.prototype);
-
-KtacTree1.actorTypeId = 1;
-KtacActor.registerActorType(KtacTree1);
 
 KtacTree1.prototype.onGraphicsLoaded = function(geometry, materials) {
 	

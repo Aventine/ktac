@@ -6,8 +6,8 @@ var INIT_STATE_READY = "ready"; // all done and ready
 // subclasses must call this.init() in their constructor
 
 function KtacActor(name) {
-  this.id = 1;
-  this.type = 0;
+  this.className = "KtacActor";
+  this.id = 0;
 	this.name = name;
 	
 	this.location = new KtacLocation(0,0,0,0);
@@ -395,12 +395,13 @@ KtacActor.prototype.destruct = function() {
 	this.boundingBox.destruct();
 };
 
-// create in database on server
+// create/update in database on server
 KtacActor.prototype.save = function() {
   var packet = new KtacActorSavePacket(this);
   packet.send();
 };
 
+/*
 // static method
 KtacActor.registerActorType = function(actorClass) {
   KtacActor.actorClassesByTypeId[actorClass.actorTypeId] = actorClass;
@@ -409,4 +410,15 @@ KtacActor.registerActorType = function(actorClass) {
 // static method
 KtacActor.getActorClassFromTypeId = function(actorTypeId) {
   return KtacActor.actorClassesByTypeId[actorTypeId];
+};
+*/
+
+KtacActor.prototype.getTypeId = function() {
+  var actorTypeId = jQuery.inArray(this.className, KTAC_CONFIG.actorTypes);
+  return actorTypeId;
+};
+
+KtacActor.getClassByTypeId = function(actorTypeId) {
+  var className = KTAC_CONFIG.actorTypes[actorTypeId];
+  return KtacFunctions.getClassFromString(className); 
 };

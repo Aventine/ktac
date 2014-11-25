@@ -1,7 +1,10 @@
 function KtacSiamese1() {
+  
 	this.type = "Siamese1";
 	
 	KtacActor.call(this, this.type);
+	
+	this.className = "KtacSiamese1";
 	
 	//this.location = {x: 0, y: 0, z: 0};
 	this.scale = {x: 1, y: 1, z: 1};
@@ -16,8 +19,9 @@ function KtacSiamese1() {
 	this.init();
 } KtacSiamese1.prototype = Object.create(KtacActor.prototype);
 
-KtacSiamese1.actorTypeId = 2;
-KtacActor.registerActorType(KtacSiamese1);
+//KtacSiamese1.actorTypeId = 2;
+//KtacSiamese1.actorTypeName = "KTAC_ACTORTYPE_SIAMESE";
+//KtacActor.registerActorType(KtacSiamese1);
 
 //KtacSiamese1.prototype.init = function() {
 //	

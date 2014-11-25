@@ -63,7 +63,7 @@ jQuery(document).ready(function() {
 	
 	//var playerActor = new KtacSiamese1();
 
-	var tree1 = new KtacTree1();
+	//var tree1 = new KtacTree1();
 	//tree1.setLocation({ x: 2, y: 0, z: 2 });
 	//var tree2 = new KtacTree1();
 	//tree1.setLocation({ x: 3, y: 0, z: 1 });

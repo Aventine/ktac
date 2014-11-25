@@ -4,7 +4,6 @@ define("KTAC_MODULE_LINK", drupal_get_path("module", "ktac") . "/");
 define("KTAC_MODULE_PATH", __DIR__ . "/");
 define("KTAC_CLIENT_LINK", KTAC_MODULE_LINK . "client/");
 
-
 // implements hook_init()
 function ktac_init() {
 	//drupal_add_css('sites/all/modules/ktac/client/client.css', "module", "all", false);
@@ -87,6 +86,7 @@ function ktacClient() {
 	require_once "server/classes/KtacNodeJs.php";
 	KtacNodeJs::startServer();
 
+  require_once "server/classes/KtacConfig.php";
 	require_once "client/client.php";
 	ktacClientIncludes();
 	
@@ -95,6 +95,7 @@ function ktacClient() {
 }
 
 function ktacAjax() {
+  require_once "server/classes/KtacConfig.php";
   require_once "server/classes/KtacValidation.php";
   require_once "server/classes/KtacLocation.php";
   require_once "server/classes/KtacActor.php";
