@@ -36,6 +36,14 @@ class KtacActorSavePacket extends KtacPacket {
     nodejs_add_user_to_channel($user->uid, "ktacChannel");
 
     nodejs_send_channel_message("ktacChannel", "KtacActorMovePacket", $this->vars);*/
+    
+    $announce = new KtacPushPacket();
+    $announce->packetName = "KtacActorSavePacket";
+    $announce->id = $ktacActor->id;
+    $announce->location = $ktacActor->location;
+    $announce->send();
+    
+    
     drupal_json_output(array('data' => array('accessGranted' => 'Actor Save Packet Processed')));
     drupal_exit();
 

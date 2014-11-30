@@ -9,7 +9,7 @@ class KtacConfig {
   );
   
   static $blockTypes = array(
-    0 => "KtacBlock",
+    0 => "KtacUndefinedBlock",
     1 => "KtacDirtBlock",
     2 => "KtacGrassBlock",
   );

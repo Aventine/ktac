@@ -57,7 +57,10 @@ KtacHighlight.highlightMouseover = function() {
       this.intersected.originalBoundingBoxColors = KtacHighlight.setHighlightColors(this.intersected, KTAC_HIGHLIGHT_COLOR);
       this.intersected.originalActorColors       = KtacHighlight.setHighlightColors(this.intersected.boundingBox.actor.mesh, KTAC_HIGHLIGHT_COLOR);
       
-      jQuery("#mouseContextInfo .label").html(KTAC_HIGHLIGHTED_ACTOR.name);
+      var html = KTAC_HIGHLIGHTED_ACTOR.name + "<br>";
+      html += KTAC_HIGHLIGHTED_ACTOR.boundingBox.location.toString() + "<br>" +
+      KTAC_HIGHLIGHTED_ACTOR.boundingBox.mesh.position.y;
+      jQuery("#mouseContextInfo .label").html(html);
       jQuery("#mouseContextInfo").removeClass("hidden");
       
     }

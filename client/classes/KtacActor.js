@@ -70,6 +70,9 @@ KtacActor.prototype.playAnimation = function(animName) {
 };
 
 KtacActor.prototype.setLocation = function(loc) {
+	if(!(loc instanceof KtacLocation)) {
+		loc = new KtacLocation(loc.zone, loc.x, loc.y, loc.z);
+	}
 	this.location = loc;
 	
 	if(this.initState != INIT_STATE_READY) {
@@ -188,8 +191,8 @@ KtacActor.prototype.progressCurrentAction = function() {
 		this.bubble.setHtml(this.name + "<br>" + action.name);
 		
 		if(!action.isaReplication) {
-      this.save(); // to get this.goalLocation to other clients
-    }
+	      this.save(); // to get this.goalLocation to other clients
+	    }
 		
 		action.started = true;
 	}
@@ -348,9 +351,12 @@ KtacActor.prototype.showBubbleMessage = function(htmlMessage) {
 	this.queueAction(action);
 };
 
-KtacActor.prototype.moveTo = function(loc) {
+KtacActor.prototype.moveTo = function(loc, isaReplication) {
 	var action = new KtacAction("Walking");
 	action.setGoalLocation(loc);
+	if(isaReplication === true) {
+		action.isaReplication = true;
+	}
 	this.queueAction(action);
 };
 
@@ -422,3 +428,14 @@ KtacActor.getClassByTypeId = function(actorTypeId) {
   var className = KTAC_CONFIG.actorTypes[actorTypeId];
   return KtacFunctions.getClassFromString(className); 
 };
+
+
+
+
+
+
+
+
+
+
+

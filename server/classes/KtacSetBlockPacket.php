@@ -33,7 +33,7 @@ class KtacSetBlockPacket extends KtacPacket {
     }
 
     if($oldBlocktype == $blocktype) {
-      $this->errorResponse("no effect: old blocktype was same as new");
+    	KtacValidation::errorOut("no effect: old blocktype was same as new");
     }
 
     // log the event
@@ -69,9 +69,9 @@ class KtacSetBlockPacket extends KtacPacket {
     $announce->setTo = $blocktype;
     $announce->send();
 
-    //nodejs_send_channel_message("ktacChannel", "KtacSetBlockPacket", json_encode($this->vars));
-    //drupal_json_output(array('data' => array('accessGranted' => 'KtacSetBlockPacket success')));
-    //drupal_exit();
+    nodejs_send_channel_message("ktacChannel", "KtacSetBlockPacket", json_encode($this->vars));
+    drupal_json_output(array('data' => array('accessGranted' => 'KtacSetBlockPacket success')));
+    drupal_exit();
     exit;
     
     //$this->errorResponse("processed success stub!");

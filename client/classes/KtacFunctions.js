@@ -24,24 +24,24 @@ KtacFunctions.getPercentStepToward = function(here, goal, percent) {
   var nextStep = here;
   
   if(goal.x < here.x) {
-    nextStep.x = here.x - (here.x - goal.x) * percent;
+    nextStep.x = parseFloat(here.x) - (parseFloat(here.x) - parseFloat(goal.x)) * percent;
   }
   else if(goal.x > here.x) {
-    nextStep.x = here.x + (goal.x - here.x) * percent;
+    nextStep.x = parseFloat(here.x) + (parseFloat(goal.x) - parseFloat(here.x)) * percent;
   }
   
   if(goal.y < here.y) {
-    nextStep.y = here.y - (here.y - goal.y) * percent;
+    nextStep.y = parseFloat(here.y) - (parseFloat(here.y) - parseFloat(goal.y)) * percent;
   }
   else if(goal.y > here.y) {
-    nextStep.y = here.y + (goal.y - here.y) * percent;
+    nextStep.y = parseFloat(here.y) + (parseFloat(goal.y) - parseFloat(here.y)) * percent;
   }
   
   if(goal.z < here.z) {
-    nextStep.z = here.z - (here.z - goal.z) * percent;
+    nextStep.z = parseFloat(here.z) - (parseFloat(here.z) - parseFloat(goal.z)) * percent;
   }
   else if(goal.z > here.z) {
-    nextStep.z = here.z + (goal.z - here.z) * percent;
+    nextStep.z = parseFloat(here.z) + (parseFloat(goal.z) - parseFloat(here.z)) * percent;
   }
   
   return nextStep;
@@ -50,7 +50,8 @@ KtacFunctions.getPercentStepToward = function(here, goal, percent) {
 // returns location of next step between here and goal, with given speed being the size of the step
 KtacFunctions.getStepToward = function(here, goal, speed) {
   
-  var nextStep = here;
+  var nextStep = here.clone();
+  speed = parseFloat(speed);
   
   if(goal.x < here.x) {
     nextStep.x -= speed;
@@ -121,3 +122,4 @@ KtacFunctions.isNumber = function(n) {
 KtacFunctions.getClassFromString = function(className) {
    return window[className];
 };
+

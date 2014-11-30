@@ -4,6 +4,7 @@ function ktacClientIncludes() {
 	
 	$clientJavascriptLibraries = array(
 		"three",
+		"dojo",
 	);
 	
 	$clientJavascriptClasses = array(
@@ -31,6 +32,11 @@ function ktacClientIncludes() {
 		"KtacWorld",
 	);
 	
+	drupal_add_js("
+	  var KTAC_CLIENT_LINK = \"" . KTAC_CLIENT_LINK . "\";
+	  var KTAC_CONFIG = " . KtacConfig::getJson() . ";
+	  ", "inline");
+	
 	foreach($clientJavascriptLibraries as $libName) {
 		drupal_add_js(KTAC_CLIENT_LINK . "libraries/" . $libName . ".js");
 	}
@@ -43,10 +49,7 @@ function ktacClientIncludes() {
 	
 	drupal_add_css(KTAC_CLIENT_LINK . 'clientStyles.css'); // couldn't be named "client.css" due to a drupal_add_css() quirk
 	
-	drupal_add_js("
-	  var KTAC_CLIENT_LINK = \"" . KTAC_CLIENT_LINK . "\";
-	  var KTAC_CONFIG = " . KtacConfig::getJson() . ";
-	  ", "inline");
+	
 	
 }
 

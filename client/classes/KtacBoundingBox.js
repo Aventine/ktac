@@ -64,15 +64,20 @@ KtacBoundingBox.prototype.init = function() {
 KtacBoundingBox.prototype.spawn = function() {
 	//var axis = new THREE.Vector3(0,0,1);
 	//this.mesh.up = axis;
+//	if(this.actor instanceof KtacActor) {
+//		ktacConsole.outputMessage(this.location.x);
+//	}
+	
 	scene1.add(this.mesh);
 	this.setLocation(this.location);
 };
 
 KtacBoundingBox.prototype.setLocation = function(loc) {
 	this.location = loc;
-	this.mesh.position.x = this.location.x + this.offset.x;
-	this.mesh.position.y = this.location.y + this.offset.y;
-	this.mesh.position.z = this.location.z + this.offset.z;
+
+	this.mesh.position.x = parseFloat(this.location.x) + parseFloat(this.offset.x);
+	this.mesh.position.y = parseFloat(this.location.y) + parseFloat(this.offset.y);
+	this.mesh.position.z = parseFloat(this.location.z) + parseFloat(this.offset.z);
 };
 
 KtacBoundingBox.prototype.setOffset = function(offset) {

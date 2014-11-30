@@ -33,241 +33,268 @@ var world1 = new KtacWorld();
 var ktacConsole = new KtacConsole();
 var playerActor;
 
+jQuery(document).ready(
+		function() {
+			ktacConsole.init();
 
-jQuery(document).ready(function() {
-  ktacConsole.init();
-	
+			renderer.setSize(window.innerWidth, window.innerHeight);
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	
-	if(shadowsOn) {
-		renderer.shadowMapEnabled = true;
-		renderer.shadowMapType = THREE.PCFShadowMap;
-	}
-	
-	
-	document.body.appendChild(renderer.domElement);
+			if (shadowsOn) {
+				renderer.shadowMapEnabled = true;
+				renderer.shadowMapType = THREE.PCFShadowMap;
+			}
 
-	
-	$packet = new KtacLoadZonePacket(0);
-	$packet.send();
-	
-	//var cube1 = new KtacGrassBlock();
-	/*var tiles = new Array();
-	for (x = 0; x < WORLD_SIZE_X; x++) {
-		for (z = 0; z < WORLD_SIZE_Z; z++) {
-			//tiles.push(new KtacUndefinedBlock(new KtacLocation(0, x, -0.5, z)));
-		}
-	} */
-	
-	
-	//var playerActor = new KtacSiamese1();
+			document.body.appendChild(renderer.domElement);
 
-	//var tree1 = new KtacTree1();
-	//tree1.setLocation({ x: 2, y: 0, z: 2 });
-	//var tree2 = new KtacTree1();
-	//tree1.setLocation({ x: 3, y: 0, z: 1 });
-	
-	
-	
-	scene1.add(new THREE.AmbientLight(0x999999));
-	var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-	directionalLight.position.set(-100, 100, -100).normalize();
-	
-	if(shadowsOn) {
-		directionalLight.castShadow = true;
+			$packet = new KtacLoadZonePacket(0);
+			$packet.send();
 
-		//directionalLight.shadowCameraNear = 1000;
-		//directionalLight.shadowCameraFar = 2500;
-		//directionalLight.shadowCameraFov = 50;
+			// var cube1 = new KtacGrassBlock();
+			/*
+			 * var tiles = new Array(); for (x = 0; x < WORLD_SIZE_X; x++) { for
+			 * (z = 0; z < WORLD_SIZE_Z; z++) { //tiles.push(new
+			 * KtacUndefinedBlock(new KtacLocation(0, x, -0.5, z))); } }
+			 */
 
-		directionalLight.shadowCameraVisible = true;
+			// var playerActor = new KtacSiamese1();
+			// var tree1 = new KtacTree1();
+			// tree1.setLocation({ x: 2, y: 0, z: 2 });
+			// var tree2 = new KtacTree1();
+			// tree1.setLocation({ x: 3, y: 0, z: 1 });
 
-		
-		
-		//directionalLight.shadowBias = 0.0001;
-		//directionalLight.shadowDarkness = 0.5;
+			scene1.add(new THREE.AmbientLight(0x999999));
+			var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+			directionalLight.position.set(-100, 100, -100).normalize();
 
-		//directionalLight.shadowMapWidth = SHADOW_MAP_WIDTH;
-		//directionalLight.shadowMapHeight = SHADOW_MAP_HEIGHT;
-		
-		directionalLight.shadowCameraRight     =  500;
-		directionalLight.shadowCameraLeft     = -500;
-		directionalLight.shadowCameraTop      =  500;
-		directionalLight.shadowCameraBottom   = -500;
+			if (shadowsOn) {
+				directionalLight.castShadow = true;
 
-	}
-	
-	scene1.add(directionalLight);
-	
-	controls = new KtacCameraControls(camera, jQuery("canvas")[0], new THREE.Vector3(0, 1, 0));
-	
-	
-	
-	
-	
-	//animate();
-	//tickLoop();
-	frameLoop();
-	
-	jQuery("canvas").mousemove(function(event) {
-		mouse.x = event.pageX;
-		mouse.y = event.pageY;
-	});
-	
-	jQuery("canvas").mousedown(function(event) {
-		
-		if(event.which == 3) { // if it was the right mouse button
-			isMouseContextMenuOpen = false; // unfreeze selecting momentarily in the event that the menu was open from something else having been right-clicked
-			KtacHighlight.highlightMouseover();
-			isMouseContextMenuOpen = true;
-			jQuery("#mouseContextMenu").css("left", mouse.x).css("top", mouse.y).removeClass("hidden");
-		}
-		
-		if(event.which == 1) { // left mouse button
-			isMouseContextMenuOpen = false;
-			jQuery("#mouseContextMenu").addClass("hidden");
-		}
-	});
-	
+				// directionalLight.shadowCameraNear = 1000;
+				// directionalLight.shadowCameraFar = 2500;
+				// directionalLight.shadowCameraFov = 50;
 
-	jQuery("#mouseContextMenu").bind("contextmenu", function(event) { return false; });
-	
-	
-	jQuery("canvas").mouseout(function() {
-		jQuery("#mouseContextInfo").addClass("hidden");
-	});
-	jQuery("canvas").mouseover(function() {
-		jQuery("#mouseContextInfo").removeClass("hidden");
-	});
-	
-	jQuery("#mouseContextMenu .moveHere").click(function() {
-		jQuery("#mouseContextMenu").addClass("hidden");
-		isMouseContextMenuOpen = false;
-		var goalLoc = new KtacLocation(0, KTAC_HIGHLIGHTED_ACTOR.location.x, 0, KTAC_HIGHLIGHTED_ACTOR.location.z);
-		playerActor.moveTo(goalLoc);
-	});
-	jQuery("#mouseContextMenu .plantTreeHere").click(function() {
-		jQuery("#mouseContextMenu").addClass("hidden");
-		isMouseContextMenuOpen = false;
-    var goalLoc = new KtacLocation(0, KTAC_HIGHLIGHTED_ACTOR.location.x, 0, KTAC_HIGHLIGHTED_ACTOR.location.z);
-		playerActor.moveTo(goalLoc);
-		playerActor.plantTree();
-	});
-	jQuery("#mouseContextMenu .removeActor").click(function() {
-		jQuery("#mouseContextMenu").addClass("hidden");
-		isMouseContextMenuOpen = false;
-		
-		if(KTAC_HIGHLIGHTED_ACTOR == playerActor) {
-			playerActor.showBubbleMessage("Dont erase yourself!");
-			return;
-		}
-		
-    var goalLoc = new KtacLocation(0, KTAC_HIGHLIGHTED_ACTOR.location.x, 0, KTAC_HIGHLIGHTED_ACTOR.location.z);
-		playerActor.moveTo(goalLoc);
-		playerActor.removeActor(KTAC_HIGHLIGHTED_ACTOR);
-		
-	});
-	
-	jQuery("#mouseContextMenu .tillHere").click(function() {
-    jQuery("#mouseContextMenu").addClass("hidden");
-    isMouseContextMenuOpen = false;
+				directionalLight.shadowCameraVisible = true;
 
-    playerActor.till(KTAC_HIGHLIGHTED_ACTOR);
-  });
-  
-  jQuery("#mouseContextMenu .plantGrassHere").click(function() {
-    jQuery("#mouseContextMenu").addClass("hidden");
-    isMouseContextMenuOpen = false;
+				// directionalLight.shadowBias = 0.0001;
+				// directionalLight.shadowDarkness = 0.5;
 
-    playerActor.setToGrass(KTAC_HIGHLIGHTED_ACTOR);
-  });
-	
-});
+				// directionalLight.shadowMapWidth = SHADOW_MAP_WIDTH;
+				// directionalLight.shadowMapHeight = SHADOW_MAP_HEIGHT;
 
+				directionalLight.shadowCameraRight = 500;
+				directionalLight.shadowCameraLeft = -500;
+				directionalLight.shadowCameraTop = 500;
+				directionalLight.shadowCameraBottom = -500;
 
+			}
 
+			scene1.add(directionalLight);
+
+			controls = new KtacCameraControls(camera, jQuery("canvas")[0],
+					new THREE.Vector3(0, 1, 0));
+
+			// animate();
+			// tickLoop();
+			frameLoop();
+
+			jQuery("canvas").mousemove(function(event) {
+				mouse.x = event.pageX;
+				mouse.y = event.pageY;
+			});
+
+			jQuery("canvas").mousedown(
+					function(event) {
+
+						if (event.which == 3) { // if it was the right mouse
+												// button
+							isMouseContextMenuOpen = false; // unfreeze
+															// selecting
+															// momentarily in
+															// the event that
+															// the menu was open
+															// from something
+															// else having been
+															// right-clicked
+							KtacHighlight.highlightMouseover();
+							isMouseContextMenuOpen = true;
+							jQuery("#mouseContextMenu").css("left", mouse.x)
+									.css("top", mouse.y).removeClass("hidden");
+						}
+
+						if (event.which == 1) { // left mouse button
+							isMouseContextMenuOpen = false;
+							jQuery("#mouseContextMenu").addClass("hidden");
+						}
+					});
+
+			jQuery("#mouseContextMenu").bind("contextmenu", function(event) {
+				return false;
+			});
+
+			jQuery("canvas").mouseout(function() {
+				jQuery("#mouseContextInfo").addClass("hidden");
+			});
+			jQuery("canvas").mouseover(function() {
+				jQuery("#mouseContextInfo").removeClass("hidden");
+			});
+
+			jQuery("#mouseContextMenu .moveHere").click(
+					function() {
+						jQuery("#mouseContextMenu").addClass("hidden");
+						isMouseContextMenuOpen = false;
+						var goalLoc = new KtacLocation(0,
+								KTAC_HIGHLIGHTED_ACTOR.location.x, 0,
+								KTAC_HIGHLIGHTED_ACTOR.location.z);
+						playerActor.moveTo(goalLoc);
+					});
+			jQuery("#mouseContextMenu .plantTreeHere").click(
+					function() {
+						jQuery("#mouseContextMenu").addClass("hidden");
+						isMouseContextMenuOpen = false;
+						var goalLoc = new KtacLocation(0,
+								KTAC_HIGHLIGHTED_ACTOR.location.x, 0,
+								KTAC_HIGHLIGHTED_ACTOR.location.z);
+						playerActor.moveTo(goalLoc);
+						playerActor.plantTree();
+					});
+			jQuery("#mouseContextMenu .removeActor").click(
+					function() {
+						jQuery("#mouseContextMenu").addClass("hidden");
+						isMouseContextMenuOpen = false;
+
+						if (KTAC_HIGHLIGHTED_ACTOR == playerActor) {
+							playerActor
+									.showBubbleMessage("Dont erase yourself!");
+							return;
+						}
+
+						var goalLoc = new KtacLocation(0,
+								KTAC_HIGHLIGHTED_ACTOR.location.x, 0,
+								KTAC_HIGHLIGHTED_ACTOR.location.z);
+						playerActor.moveTo(goalLoc);
+						playerActor.removeActor(KTAC_HIGHLIGHTED_ACTOR);
+
+					});
+
+			jQuery("#mouseContextMenu .tillHere").click(function() {
+				jQuery("#mouseContextMenu").addClass("hidden");
+				isMouseContextMenuOpen = false;
+
+				playerActor.till(KTAC_HIGHLIGHTED_ACTOR);
+			});
+
+			jQuery("#mouseContextMenu .plantGrassHere").click(function() {
+				jQuery("#mouseContextMenu").addClass("hidden");
+				isMouseContextMenuOpen = false;
+
+				playerActor.setToGrass(KTAC_HIGHLIGHTED_ACTOR);
+			});
+
+		});
 
 function tickLoop() {
-	for(var i = 0; i < scene1.actors.length; i++) {
+	for (var i = 0; i < scene1.actors.length; i++) {
 		scene1.actors[i].tick();
 	}
-	/*if(KTAC_HIGHLIGHTED_ACTOR != null) {
-		controls.lookAt(KTAC_HIGHLIGHTED_ACTOR.mesh.position);
-	}*/
-	
+	/*
+	 * if(KTAC_HIGHLIGHTED_ACTOR != null) {
+	 * controls.lookAt(KTAC_HIGHLIGHTED_ACTOR.mesh.position); }
+	 */
+
 	SECONDS_SINCE_TICK = 0;
-	//SECONDS_FROM_FRAME_TO_LAST_TICK = clock.getDelta();
-	//setTimeout(tickLoop, 1000 / TICKS_PER_SECOND);
-	
-	//console.outputMessage("testing KtacConsole on tick");
+	// SECONDS_FROM_FRAME_TO_LAST_TICK = clock.getDelta();
+	// setTimeout(tickLoop, 1000 / TICKS_PER_SECOND);
+
+	// console.outputMessage("testing KtacConsole on tick");
 }
 
 function frameLoop() {
-		requestAnimationFrame( frameLoop );
-		
-		var delta = clock.getDelta();
-		SECONDS_SINCE_TICK += delta;
-		if(SECONDS_SINCE_TICK > SECONDS_PER_TICK) {
-			SECONDS_SINCE_TICK = 0;
-			tickLoop();
-			//delta += SECONDS_FROM_FRAME_TO_LAST_TICK;
-		}
+	requestAnimationFrame(frameLoop);
 
-		THREE.AnimationHandler.update( delta * 20 );
-		
-		controls.update(delta);
-		
-		renderer.render(scene1, camera);
-		
-		KtacHighlight.highlightMouseover();
-		
-		for(var i = 0; i < scene1.actors.length; i++) {
-			scene1.actors[i].frame(delta);
-		}
+	var delta = clock.getDelta();
+	SECONDS_SINCE_TICK += delta;
+	if (SECONDS_SINCE_TICK > SECONDS_PER_TICK) {
+		SECONDS_SINCE_TICK = 0;
+		tickLoop();
+		// delta += SECONDS_FROM_FRAME_TO_LAST_TICK;
+	}
+
+	THREE.AnimationHandler.update(delta * 20);
+
+	controls.update(delta);
+
+	renderer.render(scene1, camera);
+
+	KtacHighlight.highlightMouseover();
+
+	for (var i = 0; i < scene1.actors.length; i++) {
+		scene1.actors[i].frame(delta);
+	}
 }
 
 Drupal.Nodejs.callbacks.ktacPushPacket = {
-  callback: function(message) {
-    
-    switch(message.data.subject) {
-    
-      case "KtacSetBlockPacket" :
-        //ktacConsole.outputMessage("recieved KtacSetBlockPacket");
-        var packet = jQuery.parseJSON(message.data.body);
-        var blockClass = KtacBlock.getBlockClassFromId(packet.setTo);
-        block = world1.getBlock(packet.loc);
-        if(block == null) {
-          
-          var block = new blockClass(packet.loc);
-          world1.addBlock(block);
-        } else {
-          block.setType(blockClass, true);
-        }
-        break;
-        
-      case "KtacActorSavePacket" :
-        ktacConsole.outputMessage("recieved KtacActorSavePacket stub");
-        // var packet = message.data.body;
-        // var action = new KtacAction("moveTo");
-        // action.setAnimation("walk");
-        // action.setGoalLocation(packet.goalLocation);
-        // action.isaReplication = true;
-        // controlledActor.queueAction(action);
-        break;
-        
-      case "KtacDebugPacket" :
-        var packet = jQuery.parseJSON(message.data.body);
-        ktacConsole.outputMessage(packet.message);
-        break;
-        
-      default:
-        throw new Error("unknown packet recieved from server");
-    }
-  }
+	callback : function(message) {
+
+		switch (message.data.subject) {
+
+		case "KtacSetBlockPacket":
+			// ktacConsole.outputMessage("recieved KtacSetBlockPacket");
+			var packet = jQuery.parseJSON(message.data.body);
+			var blockClass = KtacBlock.getBlockClassFromId(packet.setTo);
+			block = world1.getBlock(packet.loc);
+			if (block == null) {
+
+				var block = new blockClass(packet.loc);
+				world1.addBlock(block);
+			} else {
+				block.setType(blockClass, true);
+			}
+			break;
+
+		case "KtacActorSavePacket":
+			var packet = jQuery.parseJSON(message.data.body);
+			//ktacConsole.outputMessage("recieved KtacActorSavePacket: " + packet.location);
+			var actorId = packet.id;
+			var actorLocation = packet.location;
+			
+			
+			playerActor.moveTo(actorLocation, true);
+			//var action = new KtacAction("moveTo");
+			//action.setAnimation("walk");
+			// action.setGoalLocation(packet.goalLocation);
+			// action.isaReplication = true;
+			// controlledActor.queueAction(action);
+			break;
+
+		case "KtacDebugPacket":
+			var packet = jQuery.parseJSON(message.data.body);
+			ktacConsole.outputMessage(packet.message);
+			break;
+
+		default:
+			throw new Error("unknown packet recieved from server");
+		}
+	}
 };
 
 
-
-
-
+/*
+require([
+         "dojo/dom",
+         "dojoClasses/ktac/Actor",
+         "dojoClasses/ktac/Location",
+         "dojoClasses/ktac/Console",
+         "dojoClasses/ktac/GrassBlock",
+         "dojo/domReady!"
+         ], function(dom, Actor, Location, Console, GrassBlock){
+	  //var loc = new Location(1,2,3,4);
+	  //alert(loc.toString());
+	
+	  ktacConsole = new Console();
+	  ktacConsole.outputMessage("hello");
+	  //ktacConsole.init();
+	
+	  var block1 = new GrassBlock(new Location(0,3,3,3));
+	  
+	});
+*/

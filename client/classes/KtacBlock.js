@@ -4,6 +4,7 @@ function KtacBlock(loc) {
   
   this.name = "Terrain Cube";
   
+  
   if(loc == undefined) {
     loc = new KtacLocation(0, 0, 0, 0);
   }
@@ -59,7 +60,7 @@ KtacBlock.prototype.setType = function(classToUse, replicated) {
   loc.y = 0;
   
   if(replicated != true) {
-    var packet = new KtacSetBlockPacket(loc, classToUse.blockId);
+    var packet = new KtacSetBlockPacket(loc, classToUse.getTypeId());
     packet.send();
   }
   
@@ -86,12 +87,14 @@ KtacBlock.getBlockClassFromId = function(blockId) {
   return KtacBlock.blockClassesById[blockId];
 };
 */
+
+//static method
 KtacBlock.getTypeId = function() {
-  var className = this.constructor.name;
-  var blockTypeId = jQuery.inArray(className, KTAC_CONFIG.blockTypes);
+  var blockTypeId = jQuery.inArray(this.className, KTAC_CONFIG.blockTypes);
   return blockTypeId;
 };
 
+//static method
 KtacBlock.getClassByTypeId = function(blockTypeId) {
   var className = KTAC_CONFIG.blockTypes[blockTypeId];
   return KtacFunctions.getClassFromString(className); 
