@@ -14,14 +14,11 @@ function KtacBlock(loc) {
   this.offset = {x: 0, y: -0.5, z: 0};
   this.texture = KTAC_CLIENT_LINK + "assets/Missing/missing.jpg";
   this.mesh = null;
-  
-  this.boundingBox = new KtacBoundingBox(this, {x: 1, y: 1, z: 1}, this.offset);
-  
 }
 
 KtacBlock.blockClassesById = new Array();
 
-KtacBlock.prototype.init = function() {
+KtacBlock.prototype.spawn = function() {
   
   var imgTexture = THREE.ImageUtils.loadTexture(this.texture);
   imgTexture.repeat.set(1, 1);
@@ -39,19 +36,13 @@ KtacBlock.prototype.init = function() {
   this.mesh = new THREE.Mesh(geometry, material2);
   this.mesh.actor = this;
   
-  this.spawn();
-};
-
-KtacBlock.prototype.spawn = function() {
-  
-  if(shadowsOn) {
-    this.mesh.receiveShadow = true;
-  }
-  
   scene1.add(this.mesh);
   this.mesh.position.x = this.location.x + this.offset.x;
   this.mesh.position.y = this.location.y + this.offset.y;
   this.mesh.position.z = this.location.z + this.offset.z;
+  
+  world1.addBlock(this);
+  this.boundingBox = new KtacBoundingBox(this, {x: 1, y: 1, z: 1}, this.offset);
 };
 
 KtacBlock.prototype.setType = function(classToUse, replicated) {
@@ -60,13 +51,16 @@ KtacBlock.prototype.setType = function(classToUse, replicated) {
   loc.y = 0;
   
   if(replicated != true) {
-    var packet = new KtacSetBlockPacket(loc, classToUse.getTypeId());
+	var instanceOfClass = new classToUse();
+    var packet = new KtacSetBlockPacket(loc, instanceOfClass.getTypeId());
     packet.send();
   }
   
   if(replicated == true) {
     var newBlock = new classToUse(this.location);
     this.destruct();
+    newBlock.spawn();
+    
   }
   
 };
@@ -88,8 +82,7 @@ KtacBlock.getBlockClassFromId = function(blockId) {
 };
 */
 
-//static method
-KtacBlock.getTypeId = function() {
+KtacBlock.prototype.getTypeId = function() {
   var blockTypeId = jQuery.inArray(this.className, KTAC_CONFIG.blockTypes);
   return blockTypeId;
 };

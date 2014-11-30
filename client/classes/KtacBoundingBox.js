@@ -57,7 +57,6 @@ KtacBoundingBox.prototype.init = function() {
 	var geometry = new THREE.BoxGeometry(this.scale.x, this.scale.y, this.scale.z);
 	this.mesh = new THREE.Mesh(geometry, material2);
 	this.mesh.boundingBox = this;
-	scene1.boundingBoxes.push(this.mesh);
 
 };
 
@@ -69,6 +68,7 @@ KtacBoundingBox.prototype.spawn = function() {
 //	}
 	
 	scene1.add(this.mesh);
+	scene1.boundingBoxes.push(this.mesh);
 	this.setLocation(this.location);
 };
 

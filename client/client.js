@@ -238,9 +238,9 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 		switch (message.data.subject) {
 
 		case "KtacSetBlockPacket":
-			// ktacConsole.outputMessage("recieved KtacSetBlockPacket");
+			//ktacConsole.outputMessage("recieved KtacSetBlockPacket");
 			var packet = jQuery.parseJSON(message.data.body);
-			var blockClass = KtacBlock.getBlockClassFromId(packet.setTo);
+			var blockClass = KtacBlock.getClassByTypeId(packet.setTo);
 			block = world1.getBlock(packet.loc);
 			if (block == null) {
 

@@ -16,7 +16,7 @@ KtacLoadZonePacket.prototype.populate = function(response) {
     var blockClass = KtacFunctions.getClassFromString(KTAC_CONFIG.blockTypes[blockId]);
     var blockLocation = new KtacLocation(blocks[i].zone, blocks[i].x, blocks[i].y, blocks[i].z);
     var block = new blockClass(blockLocation);
-    world1.addBlock(block);
+    block.spawn();
   } 
   
   // fill the empty areas with Undefined Blocks
@@ -27,7 +27,7 @@ KtacLoadZonePacket.prototype.populate = function(response) {
       var loc = new KtacLocation(zone, x, y, z);
       if(world1.getBlock(loc) == null) {
         var block = new KtacUndefinedBlock(loc);
-        world1.addBlock(block);
+        block.spawn();
       }
     }
   }
