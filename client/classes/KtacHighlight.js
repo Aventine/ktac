@@ -17,7 +17,7 @@ KtacHighlight.highlightMouseover = function() {
   mouseVector.y = - ( mouse.y / window.innerHeight ) * 2 + 1;
   
   var vector = new THREE.Vector3( mouseVector.x, mouseVector.y, 1 );
-  projector.unprojectVector( vector, camera );
+  vector.unproject( camera );
   var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 
   // create an array containing all objects in the scene with which the ray intersects
@@ -35,7 +35,7 @@ KtacHighlight.highlightMouseover = function() {
         // restore previous intersection object (if it exists) to its original color
       if ( this.intersected ) {
  
-        KtacHighlight.setHighlightColors(this.intersected, this.intersected.originalBoundingBoxColor);
+        KtacHighlight.setHighlightColors(this.intersected, this.intersected.originalBoundingBoxColors);
         KtacHighlight.setHighlightColors(this.intersected.boundingBox.actor.mesh, this.intersected.originalActorColors);
       }
       // store reference to closest object as current intersection object
@@ -69,9 +69,6 @@ KtacHighlight.highlightMouseover = function() {
   {
     // restore previous intersection object (if it exists) to its original color
     if ( this.intersected ) { 
-      
-      //this.intersected.material.color.setHex( this.intersected.originalBoundingBoxColor );
-      //this.intersected.boundingBox.actor.mesh.material.materials[0].color.setHex( this.intersected.originalActorColor );
       
       KtacHighlight.setHighlightColors(this.intersected, this.intersected.originalBoundingBoxColors);
       KtacHighlight.setHighlightColors(this.intersected.boundingBox.actor.mesh, this.intersected.originalActorColors);

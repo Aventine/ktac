@@ -14,38 +14,36 @@ class KtacActorSavePacket extends KtacPacket {
   public $actor;
 
   function process() {
-    //parent::validate();
-    //$this->actor = $this->rawData->actor;
-//print_r($this->vars["actor"]);
-//echo $id; die;
-    //$debug = new KtacDebugPacket(print_r($this, 1));
-    //$debug->send();
-  
-    $ktacActor = new KtacActor($this->rawData->actor);
+
+  	$ktacActor = new KtacActor($this->rawData->actor);
+  	
+//   	if(isset($this->rawData->deleteOnServer) && $this->rawData->deleteOnServer === true) {
+//   		$num_deleted = db_delete('ktac_actor')
+//   		->condition('id', $ktacActor->id)
+//   		->execute();
+  		
+//   		$announce = new KtacPushPacket();
+//   		$announce->packetName = "KtacActorSavePacket";
+//   		$announce->id = $ktacActor->id;
+//   		$announce->deletedOnServer = true;
+//   		$announce->send();
+  		
+//   		drupal_json_output(array('data' => array('accessGranted' => 'Actor Delete Packet Processed')));
+//   		drupal_exit(); exit;
+//   	}
+  	
     $ktacActor->save();
- 
-   //$id = $this->validateInteger("actor id", $this->vars["actor"]->id);
-   
-
-   /* $zone = $this->validateNumeric("loc zone", $this->vars["goalLocation"]['zone']);
-    $x    = $this->validateNumeric("loc x", $this->vars["goalLocation"]['x']);
-    $y    = $this->validateNumeric("loc y", $this->vars["goalLocation"]['y']);
-    $z    = $this->validateNumeric("loc z", $this->vars["goalLocation"]['z']);
-
-    global $user;
-    nodejs_add_user_to_channel($user->uid, "ktacChannel");
-
-    nodejs_send_channel_message("ktacChannel", "KtacActorMovePacket", $this->vars);*/
     
     $announce = new KtacPushPacket();
     $announce->packetName = "KtacActorSavePacket";
     $announce->id = $ktacActor->id;
     $announce->location = $ktacActor->location;
+    $announce->toBeDeleted = $ktacActor->toBeDeleted;
     $announce->send();
     
     
     drupal_json_output(array('data' => array('accessGranted' => 'Actor Save Packet Processed')));
-    drupal_exit();
+    drupal_exit(); exit;
 
     //$this->errorResponse("Actor Move Packet processed success stub!");
   }

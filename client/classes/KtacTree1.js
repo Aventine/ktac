@@ -1,8 +1,10 @@
 function KtacTree1() {
-  this.className = "KtacTree1";
+
 	this.type = "Tree1";
-	
 	KtacActor.call(this, this.type);
+	
+	this.className = "KtacTree1";
+
 	
 	this.location = {x: 2, y: 0, z: 2};
 	this.scale = {x: 0.5, y: 0.5, z: 0.5};
@@ -95,4 +97,20 @@ KtacTree1.prototype.growFromSmall = function() {
 	});
 	
 	this.queueAction(action);
+};
+
+KtacTree1.prototype.beChoppedDown = function() {
+	var action = new KtacAction("pretend to fall over");
+	action.setDuration(20);
+	
+	action.setSuccessCallback(function(tree) {
+		var loc = tree.location.clone();
+		tree.destruct();
+		var logPile = new KtacLogpile();
+		logPile.setLocation(loc);
+		logPile.save();
+	});
+	
+	this.queueAction(action);
+	
 };

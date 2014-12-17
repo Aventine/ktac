@@ -1,5 +1,6 @@
 function KtacWorld() {
   this.blocksByLocation = new Array();
+  this.actorsById = new Array();
 }
 
 KtacWorld.prototype.addBlock = function(block) {
@@ -35,4 +36,23 @@ KtacWorld.prototype.getBlock = function(loc) {
     return null;
   }
   return this.blocksByLocation[loc.zone][loc.x][loc.y][loc.z];
+};
+
+KtacWorld.prototype.setActor = function(actor) {
+	if(actor.id == 0) {
+		return;
+	}
+	
+	this.actorsById[actor.id] = actor;
+};
+
+KtacWorld.prototype.removeActor = function(actor) {
+	this.actorsById.splice(actor.id, 1);
+};
+
+KtacWorld.prototype.getActorById = function(id) {
+	if(this.actorsById[id] == undefined) {
+		return null;
+	}
+	return this.actorsById[id];
 };

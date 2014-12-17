@@ -6,6 +6,7 @@ class KtacActor {
   public $id;
   public $name;
   public $location;
+  public $toBeDeleted = false;
   
   function __construct($idOrJson) {
     if(is_int($id)) {
@@ -43,10 +44,19 @@ class KtacActor {
     $this->type = KtacValidation::requireInteger($js->typeId);
     $this->name = KtacValidation::requireName($js->name);
     $this->location = new KtacLocation($js->location);
+    $this->toBeDeleted = KtacValidation::requireBoolean($js->toBeDeleted);
   }
   
   function save() {
     
+  	if($this->toBeDeleted === true) {
+  		$num_deleted = db_delete('ktac_actor')
+  			->condition('id', $this->id)
+  			->execute();
+  		
+  		return;
+  	} 
+  	
     //$debug = new KtacDebugPacket("saving with id " . $this->id . " and actortype " . $this->type); $debug->send();
     
     db_merge('ktac_actor')

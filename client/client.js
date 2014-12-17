@@ -2,7 +2,7 @@ var clock = new THREE.Clock();
 var scene1 = new THREE.Scene();
 scene1.boundingBoxes = new Array(); // Array of BoundingBox meshes (not BoundingBox itself)
 scene1.actors = new Array(); // Array of Actors
-var projector = new THREE.Projector(); // for detecting mouseover of 3d objects
+//var projector = new THREE.Projector(); // for detecting mouseover of 3d objects
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.x = -2;
 camera.position.y = 3;
@@ -33,8 +33,7 @@ var world1 = new KtacWorld();
 var ktacConsole = new KtacConsole();
 var playerActor;
 
-jQuery(document).ready(
-		function() {
+jQuery(document).ready(function() {
 			ktacConsole.init();
 
 			renderer.setSize(window.innerWidth, window.innerHeight);
@@ -189,8 +188,15 @@ jQuery(document).ready(
 
 				playerActor.setToGrass(KTAC_HIGHLIGHTED_ACTOR);
 			});
+			
+			jQuery("#mouseContextMenu .chopTree").click(function() {
+				jQuery("#mouseContextMenu").addClass("hidden");
+				isMouseContextMenuOpen = false;
 
-		});
+				playerActor.chopTree(KTAC_HIGHLIGHTED_ACTOR);
+			});
+
+});
 
 function tickLoop() {
 	for (var i = 0; i < scene1.actors.length; i++) {
@@ -255,10 +261,16 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 			var packet = jQuery.parseJSON(message.data.body);
 			//ktacConsole.outputMessage("recieved KtacActorSavePacket: " + packet.location);
 			var actorId = packet.id;
-			var actorLocation = packet.location;
 			
+			var actor = world1.getActorById(actorId);
+			if(actor != null) {
+			  
+			  if(packet.toBeDeleted == true) {
+			    actor.destructReplicated();
+			  }
+				actor.moveTo(packet.location, true);
+			}
 			
-			playerActor.moveTo(actorLocation, true);
 			//var action = new KtacAction("moveTo");
 			//action.setAnimation("walk");
 			// action.setGoalLocation(packet.goalLocation);
@@ -276,25 +288,3 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 		}
 	}
 };
-
-
-/*
-require([
-         "dojo/dom",
-         "dojoClasses/ktac/Actor",
-         "dojoClasses/ktac/Location",
-         "dojoClasses/ktac/Console",
-         "dojoClasses/ktac/GrassBlock",
-         "dojo/domReady!"
-         ], function(dom, Actor, Location, Console, GrassBlock){
-	  //var loc = new Location(1,2,3,4);
-	  //alert(loc.toString());
-	
-	  ktacConsole = new Console();
-	  ktacConsole.outputMessage("hello");
-	  //ktacConsole.init();
-	
-	  var block1 = new GrassBlock(new Location(0,3,3,3));
-	  
-	});
-*/

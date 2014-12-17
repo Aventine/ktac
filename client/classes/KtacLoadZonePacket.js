@@ -40,6 +40,7 @@ KtacLoadZonePacket.prototype.populate = function(response) {
     actor.id = serverActors[i].id;
     var serverLoc = serverActors[i].location;
     actor.setLocation(new KtacLocation(serverLoc.zone, serverLoc.x, serverLoc.y, serverLoc.z));
+    world1.setActor(actor);
     if(!assignedPlayerActor && actor instanceof KtacSiamese1) {
       playerActor = actor;
       assignedPlayerActor = true;

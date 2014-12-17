@@ -3,8 +3,8 @@
 function ktacClientIncludes() {
 	
 	$clientJavascriptLibraries = array(
-		"three",
-		"dojo",
+		//"three",
+		"three.min",
 	);
 	
 	$clientJavascriptClasses = array(
@@ -30,6 +30,7 @@ function ktacClientIncludes() {
 		"KtacSiamese1",
 		"KtacTree1",
 		"KtacWorld",
+		"KtacLogpile",
 	);
 	
 	drupal_add_js("

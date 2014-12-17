@@ -6,6 +6,7 @@ var INIT_STATE_READY = "ready"; // all done and ready
 // subclasses must call this.init() in their constructor
 
 function KtacActor(name) {
+
   this.className = "KtacActor";
   this.id = 0;
 	this.name = name;
@@ -31,6 +32,8 @@ function KtacActor(name) {
 	//this.velocity = {x: 0, y: 0, z: 0}; // used for moving the mesh each frame between ticks
   this.goalLocation = null; // where this actor is trying to be
 	this.meshGoalLocation = null; // where to move the mesh to each frame, to arrive at roughly the next tick
+	
+	this.toBeDeleted = false;
 };
 
 KtacActor.actorClassesByTypeId = new Array();
@@ -396,9 +399,13 @@ KtacActor.prototype.queueDestructAction = function() {
 };
 
 KtacActor.prototype.destruct = function() {
+  this.toBeDeleted = true;
 	scene1.remove(this.mesh);
 	KtacFunctions.removeFromArray(this, scene1.actors);
 	this.boundingBox.destruct();
+	world1.removeActor(this);
+	var packet = new KtacActorSavePacket(this);
+	packet.send();
 };
 
 // create/update in database on server

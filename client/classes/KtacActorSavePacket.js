@@ -1,4 +1,4 @@
-function KtacActorSavePacket(actor) {
+function KtacActorSavePacket(actor, options) {
   KtacPacket.call(this);
   
   this.type = "KtacActorSavePacket";
@@ -13,7 +13,6 @@ function KtacActorSavePacket(actor) {
   } else {
     this.content.actor.location = actor.location;
   }
-  
-  
+  this.content.actor.toBeDeleted = actor.toBeDeleted;
   
 } KtacActorSavePacket.prototype = Object.create(KtacPacket.prototype);

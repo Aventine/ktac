@@ -119,3 +119,25 @@ KtacSiamese1.prototype.setToGrass = function(block) {
   }));
   this.queueAction(action);
 };
+
+KtacSiamese1.prototype.chopTree = function(tree) {
+	
+	if(!(tree instanceof KtacTree1)) {
+		this.showBubbleMessage("Thats not a tree!");
+		return;
+	}
+	
+	var goalLoc = tree.location.clone();
+	goalLoc.y = 0;
+	this.moveTo(goalLoc);
+	
+	var action = new KtacAction("Chopping a Tree");
+	//action.setAnimation("walk");
+	action.setDuration(20); // in ticks
+	
+	action.setSuccessCallback(KtacFunctions.createBoundedWrapper({tree: tree}, function() {
+		this.tree.beChoppedDown();
+	}));
+	
+	this.queueAction(action);
+};

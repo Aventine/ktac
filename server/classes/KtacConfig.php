@@ -6,6 +6,7 @@ class KtacConfig {
     0 => "KtacActor",
     1 => "KtacSiamese1",
     2 => "KtacTree1",
+  	3 => "KtacLogpile",
   );
   
   static $blockTypes = array(

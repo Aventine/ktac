@@ -21,6 +21,16 @@ class KtacValidation {
     return $value;
   }
   
+  static function requireBoolean($value) {
+  	$asBool = (bool)$value;
+  	if($value != $asBool) {
+  		$message = "Boolean required, was " . htmlentities($value);
+  		self::errorOut($message);
+  	}
+  
+  	return $asBool;
+  }
+  
   static function errorOut($message) {
     $ex = new Exception($message);
     print_r($ex->getTrace());
