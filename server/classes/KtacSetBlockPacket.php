@@ -63,7 +63,8 @@ class KtacSetBlockPacket extends KtacPacket {
 
     //ktacTestNodeJsPushTilled();
 
-    $announce = new KtacPushPacket();
+    //$announce = new KtacPushPacket();
+    $announce = $this->createReplyPacket();
     $announce->packetName = "KtacSetBlockPacket";
     $announce->loc = $loc;
     $announce->setTo = $blocktype;

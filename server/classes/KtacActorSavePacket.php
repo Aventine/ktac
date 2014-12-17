@@ -34,7 +34,8 @@ class KtacActorSavePacket extends KtacPacket {
   	
     $ktacActor->save();
     
-    $announce = new KtacPushPacket();
+    //$announce = new KtacPushPacket();
+    $announce = $this->createReplyPacket();
     $announce->packetName = "KtacActorSavePacket";
     $announce->id = $ktacActor->id;
     $announce->location = $ktacActor->location;

@@ -398,14 +398,16 @@ KtacActor.prototype.queueDestructAction = function() {
 	this.queueAction(action);
 };
 
-KtacActor.prototype.destruct = function() {
+KtacActor.prototype.destruct = function(replicated) {
   this.toBeDeleted = true;
 	scene1.remove(this.mesh);
 	KtacFunctions.removeFromArray(this, scene1.actors);
 	this.boundingBox.destruct();
 	world1.removeActor(this);
-	var packet = new KtacActorSavePacket(this);
-	packet.send();
+	if(!replicated) {
+	  var packet = new KtacActorSavePacket(this);
+	  packet.send();
+	}
 };
 
 // create/update in database on server

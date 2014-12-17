@@ -33,6 +33,9 @@ var world1 = new KtacWorld();
 var ktacConsole = new KtacConsole();
 var playerActor;
 
+var KTAC_SOCKET_ID = undefined; // will be set to Drupal.Nodejs.socket.io.engine.id when it's available
+var ktacPacketQueue = new KtacPacketQueue();
+
 jQuery(document).ready(function() {
 			ktacConsole.init();
 
@@ -260,15 +263,21 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 		case "KtacActorSavePacket":
 			var packet = jQuery.parseJSON(message.data.body);
 			//ktacConsole.outputMessage("recieved KtacActorSavePacket: " + packet.location);
+			
+			var replicated = (packet.replyToSocketId != KTAC_SOCKET_ID);
+			
 			var actorId = packet.id;
 			
 			var actor = world1.getActorById(actorId);
 			if(actor != null) {
 			  
-			  if(packet.toBeDeleted == true) {
-			    actor.destructReplicated();
+			  if(replicated) {
+			    if(packet.toBeDeleted == true) {
+	          actor.destruct(true);
+	        }
+			    
+			    actor.moveTo(packet.location, true);
 			  }
-				actor.moveTo(packet.location, true);
 			}
 			
 			//var action = new KtacAction("moveTo");
@@ -285,6 +294,11 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 
 		default:
 			throw new Error("unknown packet recieved from server");
+		}
+		
+		if(packet.replyToSocketId == KTAC_SOCKET_ID) {
+		  ktacConsole.outputMessage("got a reply for our packet!");
+		  
 		}
 	}
 };

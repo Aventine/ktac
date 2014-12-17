@@ -131,7 +131,8 @@ function ktacAjax() {
     default:
       ktacAjaxErrorBailout("invalid packet type: " . $packetType);
   }
-  
+  $packet->fromSocketId = ktacAjaxRequirePostVar("packetSocketId");
+  $packet->fromTimestamp = ktacAjaxRequirePostVar("packetTimestamp");
   $packet->process();
 
   //$output = print_r($_POST, 1);
