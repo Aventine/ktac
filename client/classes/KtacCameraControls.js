@@ -215,78 +215,37 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 	
 	this.update = function( delta ) {
 
-		//this.camera.rotation.y = 0;
-		//this.camera.rotation.z = 0;
+	  var moveMult = delta * this.movementSpeed;
+    var rotMult = delta * this.lookSpeed;
 		
+    // Pretend to look ahead instead of up or down as we move forward and backward.
+    // This will fix us to the horizontal plane.
+		var actualRotation = this.camera.rotation.clone();
+		this.lookLatLon(0, this.lon);
+    this.camera.translateX( this.moveVector.x * moveMult );
+    this.camera.translateZ( this.moveVector.z * moveMult );
+    this.camera.rotation = actualRotation;
+    
 		this.updateRotationAngles();
 		
-		var moveMult = delta * this.movementSpeed;
-		var rotMult = delta * this.lookSpeed;
-
-		this.camera.translateX( this.moveVector.x * moveMult );
-		//this.camera.translateY( this.moveVector.y * moveMult );
-		this.camera.translateZ( this.moveVector.z * moveMult );
-
 		this.camera.position.y += ( -this.moveState.down + this.moveState.up ) * moveMult;
 		
-		
-		//this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
-		//this.camera.quaternion.multiply( this.tmpQuaternion );
-
-		// expose the rotation vector for convenience
-		//this.camera.rotation.setFromQuaternion( this.camera.quaternion, this.camera.rotation.order );
-		
-		//var axis = new THREE.Vector3(1,0,0);
-		//this.camera.rotateOnAxis(axis, this.rotationVector.x * rotMult);
-		//var axis = new THREE.Vector3(0,1,0);
-		//this.camera.rotateOnAxis(axis, this.rotationVector.y * rotMult);
-		
-		this.phi   = THREE.Math.degToRad( 90 - this.lat );
-		this.theta = THREE.Math.degToRad( this.lon );
-		
-		var targetPosition = new THREE.Vector3( 0, 0, 0 );
-		var radius = 10;
-		var position = this.camera.position;
-		
-		//targetPosition.x = position.x + radius * Math.sin( this.phi ) * Math.cos( this.theta );
-		//targetPosition.y = position.y + radius * Math.cos( this.phi );
-		//targetPosition.z = position.z + radius * Math.sin( this.phi ) * Math.sin( this.theta );
-
-		targetPosition.x = position.x - radius * Math.sin( this.phi ) * Math.cos( this.theta );
-		targetPosition.y = position.y + radius * Math.cos( this.phi );
-		targetPosition.z = position.z + radius * Math.sin( this.phi ) * Math.sin( this.theta );
-		
-		
-		//var euler = new THREE.Euler( 0, 0, 0, 'XYZ' );
-		//targetPosition.applyEuler(euler);
-		//this.camera.eulerOrder = "ZXY";
-		
-		this.camera.lookAt( targetPosition );
-		//this.camera.rotation.x = 0;
-		//this.camera.rotation.y = 0;
-		//this.camera.rotation.z = 0;
-		
-		//this.camera.rotation.applyEuler(euler);
-		
-		//var axis = new THREE.Vector3(1,0,0);
-		//this.camera.rotateOnAxis(axis, -this.theta);
-		//var axis = new THREE.Vector3(0,1,0);
-		//this.camera.up = axis;
-
-		
-	//		jQuery("#mouseContextInfo .debug").html("camera rotation<br>" +
-	//				"x: " + camera.rotation.x + "<br>" +
-	//				"y: " + camera.rotation.y + "<br>" +
-	//				"z: " + camera.rotation.z + "<br>" + 
-	//				"lat: " + this.lat + "<br>" + 
-	//				"lon: " + this.lon + "<br>" + 
-	//				"theta: " + this.theta + "<br>" + 
-	//				"phi: " + this.phi + "<br>"
-//				"debugLat: " + this.debugLat + "<br>" + 
-//				"debugLon: " + this.debugLon + "<br>"
-				
-//				);
+		this.lookLatLon(this.lat, this.lon);
 	};
+	
+	this.lookLatLon = function(lat, lon) {
+	  this.phi   = THREE.Math.degToRad( 90 - lat );
+    this.theta = THREE.Math.degToRad( lon );
+    
+    var targetPosition = new THREE.Vector3( 0, 0, 0 );
+    var radius = 10;
+
+    targetPosition.x = this.camera.position.x - radius * Math.sin( this.phi ) * Math.cos( this.theta );
+    targetPosition.y = this.camera.position.y + radius * Math.cos( this.phi );
+    targetPosition.z = this.camera.position.z + radius * Math.sin( this.phi ) * Math.sin( this.theta );
+    
+    this.camera.lookAt( targetPosition );
+	}
 	
 	function bind( scope, fn ) {
 

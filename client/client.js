@@ -36,9 +36,22 @@ var playerActor;
 var KTAC_SOCKET_ID = undefined; // will be set to Drupal.Nodejs.socket.io.engine.id when it's available
 var ktacPacketQueue = new KtacPacketQueue();
 
+var fpsMeterElement;
+var fpsLastOneSecond = 0;
+var fpsLastFiveSeconds = 0;
+var fpsLastFifteenSeconds = 0;
+var idlePercentLastOneSecond = 0;
+
+var frameLimit = 50;
+var deltaLimit = 1 / frameLimit; // minimum time between frames to allow.  Deltas below this amount are too high FPS
+
 jQuery(document).ready(function() {
 			ktacConsole.init();
 
+			window.addEventListener( 'resize', onWindowResize, false );
+			
+			fpsMeterElement = jQuery("#fpsMeter");
+			
 			renderer.setSize(window.innerWidth, window.innerHeight);
 
 			if (shadowsOn) {
@@ -218,9 +231,30 @@ function tickLoop() {
 }
 
 function frameLoop() {
-	requestAnimationFrame(frameLoop);
 
 	var delta = clock.getDelta();
+	var fps = 1 / delta;
+	
+	var delay = 0;
+	if(delta > deltaLimit) {
+	  requestAnimationFrame(frameLoop);
+	} else {
+	  delay = deltaLimit - delta;
+	  if(delay < 0) delay = 0;
+	  //ktacConsole.outputMessage("delaying frame " + delay.toFixed(3));
+	  // the setTimeout is to enact a frame limiter, only allowing "frameLimit" FPS maximum
+	  setTimeout( function() {
+	    requestAnimationFrame(frameLoop);
+	  }, 1000 * delay );
+	}
+	
+  var frameTime = delta + delay;
+  var idlePercent = delay / frameTime;
+  idlePercentLastOneSecond = ((1-frameTime) * idlePercentLastOneSecond) + (frameTime * idlePercent);
+
+	
+	
+	
 	SECONDS_SINCE_TICK += delta;
 	if (SECONDS_SINCE_TICK > SECONDS_PER_TICK) {
 		SECONDS_SINCE_TICK = 0;
@@ -239,6 +273,31 @@ function frameLoop() {
 	for (var i = 0; i < scene1.actors.length; i++) {
 		scene1.actors[i].frame(delta);
 	}
+	
+	
+	
+	if(delta >= 1) {
+	  fpsLastOneSecond = fps;
+	} else {
+	  fpsLastOneSecond = ((1-delta) * fpsLastOneSecond) + (delta * fps);
+	}
+
+	if(delta >= 5) {
+	  fpsLastFiveSeconds = fps;
+  } else {
+    fpsLastFiveSeconds = (((5-delta) * fpsLastFiveSeconds) + (delta * fps)) / 5;
+  }
+	
+	if(delta >= 15) {
+	  fpsLastFifteenSeconds = fps;
+  } else {
+    fpsLastFifteenSeconds = (((15-delta) * fpsLastFifteenSeconds) + (delta * fps)) / 15;
+  }
+	
+	
+	var fpsString = Math.floor(fpsLastOneSecond);// + " / " + Math.floor(fpsLastFiveSeconds) + " / " + Math.floor(fpsLastFifteenSeconds);
+	
+	fpsMeterElement.html(fpsString + " FPS " + "(" + parseInt(idlePercentLastOneSecond*100) + "% idle)");
 }
 
 Drupal.Nodejs.callbacks.ktacPushPacket = {
@@ -262,24 +321,30 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 
 		case "KtacActorSavePacket":
 			var packet = jQuery.parseJSON(message.data.body);
-			//ktacConsole.outputMessage("recieved KtacActorSavePacket: " + packet.location);
 			
 			var replicated = (packet.replyToSocketId != KTAC_SOCKET_ID);
 			
 			var actorId = packet.id;
 			
 			var actor = world1.getActorById(actorId);
-			if(actor != null) {
-			  
-			  if(replicated) {
-			    if(packet.toBeDeleted == true) {
-	          actor.destruct(true);
-	        }
-			    
-			    actor.moveTo(packet.location, true);
-			  }
+			
+			if(actor == null && packet.toBeDeleted != true) {
+			  var actorClass = KtacActor.getClassByTypeId(packet.actorType);
+			  actor = new actorClass();
+			  actor.id = packet.id;
+			  actor.setLocation(packet.location);
+			  actor.spawn();
 			}
 			
+			if(replicated && actor != null) {  
+			  if(packet.toBeDeleted == true) {
+          actor.destructReplicated();
+        } else {
+          actor.moveToReplicated(packet.location);
+        }
+			}
+			
+
 			//var action = new KtacAction("moveTo");
 			//action.setAnimation("walk");
 			// action.setGoalLocation(packet.goalLocation);
@@ -297,8 +362,18 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 		}
 		
 		if(packet.replyToSocketId == KTAC_SOCKET_ID) {
-		  ktacConsole.outputMessage("got a reply for our packet!");
-		  
+		  //ktacConsole.outputMessage("got a reply for our packet!");
 		}
 	}
 };
+
+function onWindowResize() {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
+
+  //controls.handleResize();
+
+}

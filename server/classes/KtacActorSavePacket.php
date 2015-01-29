@@ -38,12 +38,13 @@ class KtacActorSavePacket extends KtacPacket {
     $announce = $this->createReplyPacket();
     $announce->packetName = "KtacActorSavePacket";
     $announce->id = $ktacActor->id;
+    $announce->actorType = $ktacActor->type;
     $announce->location = $ktacActor->location;
     $announce->toBeDeleted = $ktacActor->toBeDeleted;
     $announce->send();
     
     
-    drupal_json_output(array('data' => array('accessGranted' => 'Actor Save Packet Processed')));
+    drupal_json_output(array('data' => array('savedId' => $ktacActor->id)));
     drupal_exit(); exit;
 
     //$this->errorResponse("Actor Move Packet processed success stub!");

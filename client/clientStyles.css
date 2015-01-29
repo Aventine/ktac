@@ -4,6 +4,7 @@ body {
 	background-image: url("assets/SkyGradient/sky_gradient.jpg");
 	font-family: verdana;
 	line-height: 1.2em;
+	overflow: hidden;
 }
 
 body .block, .region {
@@ -82,19 +83,45 @@ canvas {
   line-height: 12px;
 }
 
-#exitLink {
+.miscUiBar {
 	display: table;
 	position: fixed;
-	right: 0px;
-	top: 0px;
 	background-color: rgba(238, 238, 238, 0.4);
-	border-style: none;
-	border-bottom-left-radius: 20px;
-	border-width: 1px;
-	padding: 10px;
+  border: 1px solid #fff;
+  margin: 0px;
+  padding: 0px;
+  color: #fff;
+}
+
+ul#topMiscUiBar {
+	top: 0px;
+	right: 0px;
+	border-top-style: none;
+	border-right-style: none;
+}
+
+.miscUiBar>li {
+	list-style-type: none;
+  border-right-style: solid;
+  border-color: #fff;
+  border-width: 1px;
+  float: left;
+  padding: 5px;
+}
+
+.miscUiBar :last-child {
+	border-right-style: none;
+}
+	
+#exitLink {
+
 }
 
 #exitLink a {
-  color: #33f;
+  color: #fff;
   text-decoration: none;
+}
+
+#fpsMeter {
+
 }

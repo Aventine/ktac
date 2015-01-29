@@ -14,3 +14,13 @@ KtacLocation.prototype.toString = function() {
 	var string = "(" + this.zone + ", " + this.x + ", " + this.y + ", " + this.z + ")";
 	return string;
 }
+
+KtacLocation.prototype.equals = function(other) {
+  if(this.zone == other.zone && 
+     this.x == other.x && 
+     this.y == other.y && 
+     this.z == other.z) {
+    return true;
+  }
+  return false;
+}

@@ -18,7 +18,6 @@ function KtacTree1() {
 	
 	this.fullsizeTreeScale = {x: this.scale.x, y: this.scale.y, z: this.scale.z};
 	
-	this.init();
 } KtacTree1.prototype = Object.create(KtacActor.prototype);
 
 KtacTree1.prototype.onGraphicsLoaded = function(geometry, materials) {

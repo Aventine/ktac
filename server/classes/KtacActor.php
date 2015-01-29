@@ -71,6 +71,9 @@ class KtacActor {
       'z' => $this->location->z,
     ))
     ->execute();
+    if($this->id == 0) {
+    	$this->id = Database::getConnection()->lastInsertId();
+    }
   }
   
   

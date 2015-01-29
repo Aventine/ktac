@@ -14,7 +14,6 @@ function KtacLogpile() {
 			
 	];
 	
-	this.init();
 } KtacLogpile.prototype = Object.create(KtacActor.prototype);
 
 KtacLogpile.prototype.onGraphicsLoaded = function(geometry, materials) {

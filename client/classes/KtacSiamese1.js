@@ -16,7 +16,6 @@ function KtacSiamese1() {
 			new KtacBlendAnim(2, "still", 1)
 	];
 	
-	this.init();
 } KtacSiamese1.prototype = Object.create(KtacActor.prototype);
 
 //KtacSiamese1.actorTypeId = 2;
@@ -123,7 +122,7 @@ KtacSiamese1.prototype.setToGrass = function(block) {
 KtacSiamese1.prototype.chopTree = function(tree) {
 	
 	if(!(tree instanceof KtacTree1)) {
-		this.showBubbleMessage("Thats not a tree!");
+		this.showBubbleMessage("That's not a tree!");
 		return;
 	}
 	

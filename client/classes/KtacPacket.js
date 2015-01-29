@@ -15,3 +15,10 @@ KtacPacket.prototype.defaultResponseCallback = function(response) {
   // to make your own packet have a response callback,
   // implement a function like here and set this.responseCallback to it
 };
+
+KtacPacket.prototype.isReplyToUs = function() {
+  if(this.replyToSocketId == KTAC_SOCKET_ID) {
+    return true;
+  }
+  return false;
+};

@@ -38,7 +38,7 @@ function KtacActor(name) {
 
 KtacActor.actorClassesByTypeId = new Array();
 
-KtacActor.prototype.init = function() {
+KtacActor.prototype.spawn = function() {
 	if(this.graphicsJson != null) {
 		var jsonLoader = new THREE.JSONLoader();
 
@@ -48,7 +48,6 @@ KtacActor.prototype.init = function() {
 	}
 	
 	scene1.actors.push(this);
-	this.spawn();
 };
 
 
@@ -308,9 +307,6 @@ KtacActor.prototype.onGraphicsReady = function() {
 	this.mesh.up = axis;
 };
 
-KtacActor.prototype.spawn = function() {
-	// nothing to do here yet (or at all?)
-};
 
 KtacActor.prototype.getUuid = function() {
 	return this.mesh.uuid;
@@ -354,13 +350,23 @@ KtacActor.prototype.showBubbleMessage = function(htmlMessage) {
 	this.queueAction(action);
 };
 
-KtacActor.prototype.moveTo = function(loc, isaReplication) {
+KtacActor.prototype.moveTo = function(loc) {
+  if(this.location.equals(loc)) {
+    return false;
+  }
 	var action = new KtacAction("Walking");
 	action.setGoalLocation(loc);
-	if(isaReplication === true) {
-		action.isaReplication = true;
-	}
 	this.queueAction(action);
+};
+
+KtacActor.prototype.moveToReplicated = function(loc) {
+  if(this.location.equals(loc)) {
+    return false;
+  }
+  var action = new KtacAction("Walking");
+  action.setGoalLocation(loc);
+  action.isaReplication = true;
+  this.queueAction(action);
 };
 
 KtacActor.prototype.removeActor = function(actorToRemove) {
@@ -398,21 +404,33 @@ KtacActor.prototype.queueDestructAction = function() {
 	this.queueAction(action);
 };
 
-KtacActor.prototype.destruct = function(replicated) {
+KtacActor.prototype.destruct = function() {
   this.toBeDeleted = true;
 	scene1.remove(this.mesh);
 	KtacFunctions.removeFromArray(this, scene1.actors);
 	this.boundingBox.destruct();
 	world1.removeActor(this);
-	if(!replicated) {
-	  var packet = new KtacActorSavePacket(this);
-	  packet.send();
-	}
+  var packet = new KtacActorSavePacket(this);
+  packet.send();
+};
+
+KtacActor.prototype.destructReplicated = function() {
+  this.toBeDeleted = true;
+  scene1.remove(this.mesh);
+  KtacFunctions.removeFromArray(this, scene1.actors);
+  this.boundingBox.destruct();
+  world1.removeActor(this);
 };
 
 // create/update in database on server
 KtacActor.prototype.save = function() {
   var packet = new KtacActorSavePacket(this);
+  packet.responseCallback = function(response) {
+    //ktacConsole.outputMessage("recieved actor save response: " + response);
+    if(this.id == 0) {
+      this.id = response.data.savedId;
+    }
+  };
   packet.send();
 };
 
