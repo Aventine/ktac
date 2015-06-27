@@ -12,6 +12,7 @@ function ktacClientIncludes() {
 	  "KtacFunctions",
 	  "KtacLocation",
 	  "KtacConsole",
+	  "KtacChatEntry",
 		"KtacPacketQueue",
 	  "KtacPacket",
 	  "KtacLoadZonePacket",

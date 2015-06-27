@@ -14,7 +14,7 @@ var renderer = new THREE.WebGLRenderer({ alpha: true });
 
 var mouse = new Object();
 var isMouseContextMenuOpen = false;
-var controls;
+var cameraControls; // will be a KtacCameraControls
 var KTAC_HIGHLIGHTED_ACTOR = null;
 var TICKS_PER_SECOND = 10;
 var SECONDS_PER_TICK = 1 / TICKS_PER_SECOND;
@@ -31,6 +31,7 @@ var WORLD_SIZE_Z = 16;
 var world1 = new KtacWorld();
 
 var ktacConsole = new KtacConsole();
+var ktacChatEntry = new KtacChatEntry();
 var playerActor;
 
 var KTAC_SOCKET_ID = undefined; // will be set to Drupal.Nodejs.socket.io.engine.id when it's available
@@ -108,7 +109,7 @@ jQuery(document).ready(function() {
 
 			scene1.add(directionalLight);
 
-			controls = new KtacCameraControls(camera, jQuery("canvas")[0],
+			cameraControls = new KtacCameraControls(camera, jQuery("canvas")[0],
 					new THREE.Vector3(0, 1, 0));
 
 			// animate();
@@ -236,7 +237,7 @@ function tickLoop() {
 	}
 	/*
 	 * if(KTAC_HIGHLIGHTED_ACTOR != null) {
-	 * controls.lookAt(KTAC_HIGHLIGHTED_ACTOR.mesh.position); }
+	 * cameraControls.lookAt(KTAC_HIGHLIGHTED_ACTOR.mesh.position); }
 	 */
 
 	SECONDS_SINCE_TICK = 0;
@@ -283,7 +284,7 @@ function frameLoop() {
 
 	THREE.AnimationHandler.update(delta * 20);
 
-	controls.update(delta);
+	cameraControls.update(delta);
 
 	renderer.render(scene1, camera);
 
@@ -393,6 +394,6 @@ function onWindowResize() {
 
   renderer.setSize( window.innerWidth, window.innerHeight );
 
-  //controls.handleResize();
+  //cameraControls.handleResize();
 
 }

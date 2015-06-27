@@ -127,3 +127,12 @@ KtacFunctions.zeroPadInteger = function (number, digits) {
     var pad = new Array(1 + digits).join(pad_char);
     return (pad + number).slice(-pad.length);
 };
+
+// from http://stackoverflow.com/questions/18749591/encode-html-entities-in-javascript
+KtacFunctions.htmlEntities = function(rawStr) {
+  if(rawStr == undefined) return "";
+  
+  return rawStr.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+  });
+};

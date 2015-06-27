@@ -63,13 +63,12 @@ canvas {
 
 #consoleContainer {
   position: fixed;
-  bottom: 0px;
-  left: 0px;
+  bottom: 28px;
+  left: 4px;
   background-color: #fff;
   opacity: 0.5;
   color: #333;
 }
-
 #consoleContainer:hover {
   opacity: 0.8;
 }
@@ -82,6 +81,28 @@ canvas {
   font-size: 10px;
   line-height: 12px;
 }
+
+#chatEntryContainer {
+  position: fixed;
+  bottom: 4px;
+  left: 4px;
+}
+
+#chatEntry {
+  height: 20px;
+  width: 408px;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  background-color: #fff;
+  opacity: 0.5;
+}
+
+#chatEntry.active,
+#chatEntry:hover {
+  opacity: 0.8;
+}
+
 
 .miscUiBar {
 	display: table;

@@ -11,6 +11,7 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 	this.minLat = -80;
 	this.degreesPerUpdate = 4;
 	
+	this.keyboardInputEnabled = true;
 	this.mouseIsDragging = false;
 	this.mousePos = { x: 0, y: 0 };
 	this.moveState = {
@@ -59,7 +60,7 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 		//this.debugLat = THREE.Math.radToDeg(latRads);
 		this.lat = 90 - THREE.Math.radToDeg(latRads);
 		this.lon = 90 + THREE.Math.radToDeg(lonRads);
-	}
+	};
 	
 	if(lookAt != undefined) {
 		this.lookAt(lookAt);
@@ -67,6 +68,10 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 	}
 	
 	this.keydown = function( event ) {
+
+    if(this.keyboardInputEnabled == false) {
+      return;
+    }
 
 		if ( event.altKey ) {
 			return;
@@ -138,11 +143,11 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 
 		}*/
 
-		event.preventDefault();
-		event.stopPropagation();
+		//event.preventDefault();
+		//event.stopPropagation();
 
-		this.mouseIsDragging = true;
-		this.mousePos = { x: 0, y: 0 };
+		//this.mouseIsDragging = true;
+		//this.mousePos = { x: 0, y: 0 };
 	};
 	
 	this.mouseup = function( event ) {
@@ -211,7 +216,7 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 		if(this.lat < this.minLat) this.lat = this.minLat;
 		
 		
-	}
+	};
 	
 	this.update = function( delta ) {
 
@@ -245,7 +250,7 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
     targetPosition.z = this.camera.position.z + radius * Math.sin( this.phi ) * Math.sin( this.theta );
     
     this.camera.lookAt( targetPosition );
-	}
+	};
 	
 	function bind( scope, fn ) {
 
@@ -256,6 +261,14 @@ function KtacCameraControls ( camera, domElement, lookAt ) {
 		};
 
 	};
+	
+  this.enableKeyboardInput = function() {
+    this.keyboardInputEnabled = true;
+  };
+  
+  this.disableKeyboardInput = function() {
+    this.keyboardInputEnabled = false;
+  };
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
