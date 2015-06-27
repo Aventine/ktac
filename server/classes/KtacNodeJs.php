@@ -33,6 +33,7 @@ class KtacNodeJs {
 		" -e /var/www/logs/.forever/err.log" .
 		" --pidFile /var/www/logs/.forever/forever.pid" .
 		" --sourceDir " .  __DIR__ . "/../../../nodejs" .
+		" --minUptime 1" .
 		" -a" . // append to log files
 		" start /server.js";
 		exec($command, $execOutput);
@@ -57,7 +58,10 @@ class KtacNodeJs {
 			}
 		}
 		if($retryNum == $maxRetries) {
-			echo "Error in launching nodejs server.  Try refreshing.  This is a bug."; die;
+			echo "Error in launching nodejs server.  Try refreshing.  This is a bug.<br>";
+			echo $command . "<br><br>";
+      print_r($execOutput);
+			die;
 		}
 		 
 		 

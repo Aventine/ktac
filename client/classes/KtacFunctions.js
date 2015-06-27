@@ -122,3 +122,8 @@ KtacFunctions.getClassFromString = function(className) {
    return window[className];
 };
 
+KtacFunctions.zeroPadInteger = function (number, digits) {
+    var pad_char = '0';
+    var pad = new Array(1 + digits).join(pad_char);
+    return (pad + number).slice(-pad.length);
+};

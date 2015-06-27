@@ -24,7 +24,7 @@ KtacBlock.prototype.spawn = function() {
   imgTexture.repeat.set(1, 1);
   imgTexture.wrapS = imgTexture.wrapT = THREE.RepeatWrapping;
   imgTexture.anisotropy = 16;
-  var shininess = 50, specular = 0x333333, bumpScale = 1, shading = THREE.SmoothShading;
+  var shininess = 50, specular = 0x333333, bumpScale = 1, shading = THREE.FlatShading;
   var material2 = new THREE.MeshLambertMaterial({
     map : imgTexture,
     color : 0x999999,
@@ -45,24 +45,32 @@ KtacBlock.prototype.spawn = function() {
   this.boundingBox = new KtacBoundingBox(this, {x: 1, y: 1, z: 1}, this.offset);
 };
 
-KtacBlock.prototype.setType = function(classToUse, replicated) {
+KtacBlock.prototype.setType = function(classToUse) {
+  
+  var loc  = this.location.clone();
+  loc.y = 0;
+  
+
+	var instanceOfClass = new classToUse();
+  var packet = new KtacSetBlockPacket(loc, instanceOfClass.getTypeId());
+  packet.send();
+
+};
+
+KtacBlock.prototype.setTypeReplicated = function(classToUse) {
   
   var loc  = this.location.clone();
   loc.y = 0;
   
   if(replicated != true) {
-	var instanceOfClass = new classToUse();
+  var instanceOfClass = new classToUse();
     var packet = new KtacSetBlockPacket(loc, instanceOfClass.getTypeId());
     packet.send();
   }
   
-  if(replicated == true) {
-    var newBlock = new classToUse(this.location);
-    this.destruct();
-    newBlock.spawn();
-    
-  }
-  
+  var newBlock = new classToUse(this.location);
+  this.destruct();
+  newBlock.spawn();
 };
 
 KtacBlock.prototype.destruct = function() {

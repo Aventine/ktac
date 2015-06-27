@@ -1,7 +1,7 @@
 function KtacBoundingBox(actor, sca, offset) {
 	this.name = "BoundingBox";
 	this.actor = actor;
-	this.opacity = 0;
+	this.opacity = 0.5;
 	
 	if(sca == undefined) {
 		sca = {x: 0.5, y: 0.5, z: 0.5};

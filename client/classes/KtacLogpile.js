@@ -21,7 +21,7 @@ KtacLogpile.prototype.onGraphicsLoaded = function(geometry, materials) {
 	KtacActor.prototype.onGraphicsLoaded.call(this, geometry, materials);
 
 
-	var texture2 = THREE.ImageUtils.loadTexture(this.texture, new THREE.UVMapping());
+	var texture2 = THREE.ImageUtils.loadTexture(this.texture);//, new THREE.UVMapping());
 	//texture2.repeat.set(16,16);
 	texture2.wrapS = THREE.RepeatWrapping;
 	texture2.wrapT = THREE.RepeatWrapping;

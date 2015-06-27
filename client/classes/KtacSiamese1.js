@@ -76,9 +76,27 @@ KtacSiamese1.prototype.plantTree = function() {
 		tree.save();
 		tree.growFromSmall();
 		//tree.spawn();
-		//game.actors.push(grass);
+
 	});
 	this.queueAction(action);
+};
+
+
+KtacSiamese1.prototype.plantWheat = function() {
+  var action = new KtacAction("Planting Wheat");
+  //action.setAnimation("walk");
+  action.setDuration(20); // in ticks
+  action.setSuccessCallback(function(actor) {
+    var wheatfield = new KtacWheatfield("planted wheat");
+    var location = actor.location.clone();
+    location.y = 0;
+    wheatfield.setLocation(location);
+    wheatfield.save();
+    //wheatfield.growFromSmall();
+    wheatfield.spawn();
+
+  });
+  this.queueAction(action);
 };
 
 KtacSiamese1.prototype.till = function(block) {

@@ -42,8 +42,10 @@ var fpsLastFiveSeconds = 0;
 var fpsLastFifteenSeconds = 0;
 var idlePercentLastOneSecond = 0;
 
-var frameLimit = 50;
+var frameLimit = 30;
 var deltaLimit = 1 / frameLimit; // minimum time between frames to allow.  Deltas below this amount are too high FPS
+
+var frameLimiter = new KtacFrameLimiter(frameLimit);
 
 jQuery(document).ready(function() {
 			ktacConsole.init();
@@ -51,6 +53,7 @@ jQuery(document).ready(function() {
 			window.addEventListener( 'resize', onWindowResize, false );
 			
 			fpsMeterElement = jQuery("#fpsMeter");
+			frameLimiter.setFpsMeterElement(jQuery("#fpsMeter"));
 			
 			renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -172,6 +175,19 @@ jQuery(document).ready(function() {
 						playerActor.moveTo(goalLoc);
 						playerActor.plantTree();
 					});
+			
+			jQuery("#mouseContextMenu .plantWheat").click(
+          function() {
+            jQuery("#mouseContextMenu").addClass("hidden");
+            isMouseContextMenuOpen = false;
+            var goalLoc = new KtacLocation(0,
+                KTAC_HIGHLIGHTED_ACTOR.location.x, 0,
+                KTAC_HIGHLIGHTED_ACTOR.location.z);
+            playerActor.moveTo(goalLoc);
+            playerActor.plantWheat();
+          });
+			
+			
 			jQuery("#mouseContextMenu .removeActor").click(
 					function() {
 						jQuery("#mouseContextMenu").addClass("hidden");
@@ -233,14 +249,14 @@ function tickLoop() {
 function frameLoop() {
 
 	var delta = clock.getDelta();
-	var fps = 1 / delta;
+	frameLimiter.requestNextFrame(delta);
 	
-	var delay = 0;
+	/*var delay = 0;
 	if(delta > deltaLimit) {
 	  requestAnimationFrame(frameLoop);
 	} else {
 	  delay = deltaLimit - delta;
-	  if(delay < 0) delay = 0;
+	  //if(delay < 0) delay = 0;
 	  //ktacConsole.outputMessage("delaying frame " + delay.toFixed(3));
 	  // the setTimeout is to enact a frame limiter, only allowing "frameLimit" FPS maximum
 	  setTimeout( function() {
@@ -249,9 +265,12 @@ function frameLoop() {
 	}
 	
   var frameTime = delta + delay;
+  var fps = 1 / frameTime;
+  ktacConsole.outputMessage("frame delta" + delta.toFixed(3) + " delay " + delay.toFixed(3) + " frameTime " + frameTime.toFixed(3));  
+  
   var idlePercent = delay / frameTime;
   idlePercentLastOneSecond = ((1-frameTime) * idlePercentLastOneSecond) + (frameTime * idlePercent);
-
+*/
 	
 	
 	
@@ -274,7 +293,7 @@ function frameLoop() {
 		scene1.actors[i].frame(delta);
 	}
 	
-	
+	/*
 	
 	if(delta >= 1) {
 	  fpsLastOneSecond = fps;
@@ -294,10 +313,10 @@ function frameLoop() {
     fpsLastFifteenSeconds = (((15-delta) * fpsLastFifteenSeconds) + (delta * fps)) / 15;
   }
 	
+	*/
+	//var fpsString = Math.floor(fpsLastOneSecond);// + " / " + Math.floor(fpsLastFiveSeconds) + " / " + Math.floor(fpsLastFifteenSeconds);
 	
-	var fpsString = Math.floor(fpsLastOneSecond);// + " / " + Math.floor(fpsLastFiveSeconds) + " / " + Math.floor(fpsLastFifteenSeconds);
-	
-	fpsMeterElement.html(fpsString + " FPS " + "(" + parseInt(idlePercentLastOneSecond*100) + "% idle)");
+	//fpsMeterElement.html(fpsString + " FPS " + "(" + parseInt(idlePercentLastOneSecond*100) + "% idle)");
 }
 
 Drupal.Nodejs.callbacks.ktacPushPacket = {
@@ -306,7 +325,7 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 		switch (message.data.subject) {
 
 		case "KtacSetBlockPacket":
-			//ktacConsole.outputMessage("recieved KtacSetBlockPacket");
+			ktacConsole.outputMessage("recieved KtacSetBlockPacket");
 			var packet = jQuery.parseJSON(message.data.body);
 			var blockClass = KtacBlock.getClassByTypeId(packet.setTo);
 			block = world1.getBlock(packet.loc);
@@ -315,7 +334,7 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 				var block = new blockClass(packet.loc);
 				world1.addBlock(block);
 			} else {
-				block.setType(blockClass, true);
+				block.setTypeReplicated(blockClass);
 			}
 			break;
 
