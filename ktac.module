@@ -17,6 +17,8 @@ function ktac_init() {
 	//system("cd " . KTAC_MODULE_PATH . "; cd ../nodejs; nodejs server.js");
 	
 	//drupal_add_js(KTAC_MODULE_LINK . 'ktacCommon.js', 'file');
+	
+	drupal_add_library('system', 'ui.progressbar');
 }
 
 // Implements hook_menu()

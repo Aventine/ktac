@@ -210,6 +210,8 @@ KtacActor.prototype.progressCurrentAction = function() {
 	if (action.remainingDuration > 0) {
 		action.remainingDuration--;
 		
+		this.bubble.updateProgressbar(action.remainingDuration, action.duration);
+		
 		if (action.tickCallback != null) {
 			action.tickCallback(this, action.duration - action.remainingDuration, action.duration);
 		}
@@ -314,7 +316,7 @@ KtacActor.prototype.getUuid = function() {
 
 KtacActor.prototype.frame = function(delta) {
 	
-	this.bubble.updatePosition();
+	this.bubble.frame();
 	this.moveMeshTowardGoalPerFrame(delta);
 };
 

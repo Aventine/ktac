@@ -16,7 +16,7 @@ var mouse = new Object();
 var isMouseContextMenuOpen = false;
 var cameraControls; // will be a KtacCameraControls
 var KTAC_HIGHLIGHTED_ACTOR = null;
-var TICKS_PER_SECOND = 10;
+var TICKS_PER_SECOND = 20;
 var SECONDS_PER_TICK = 1 / TICKS_PER_SECOND;
 var SECONDS_SINCE_TICK = 0;
 //var SECONDS_FROM_FRAME_TO_LAST_TICK = 0;

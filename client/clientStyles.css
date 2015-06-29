@@ -146,3 +146,7 @@ ul#topMiscUiBar {
 #fpsMeter {
 
 }
+
+.ui-progressbar {
+  height: 4px;
+}
