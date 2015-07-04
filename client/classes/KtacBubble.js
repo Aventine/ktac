@@ -57,6 +57,8 @@ KtacBubble.prototype.updateProgressbar = function(remainingDurationTicks, durati
 };
 
 KtacBubble.prototype.frame = function() {
+  if(this.progressbarElement == null) return;
+  
   this.updatePosition();
   
   var fakeFramePartialTick; // to make the progress bar smooth, per-frame updates while actually being per-tick.  This how much of a portion of a tick to fake (0-1).

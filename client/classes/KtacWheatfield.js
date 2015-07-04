@@ -26,15 +26,21 @@ KtacWheatfield.prototype.onGraphicsLoaded = function(geometry, materials) {
   texture2.wrapS = THREE.RepeatWrapping;
   texture2.wrapT = THREE.RepeatWrapping;
   var material = new THREE.MeshLambertMaterial({
-      map : null,//texture2,
-      color : 0x999999,
-      ambient : 0x777777,
+      map : texture2,
+      color : 0xC9AF38,
+      ambient : 0xaaaaaa,
       shading : THREE.SmoothShading,
       //skinning: true,
       //wireframe: true,
+      alphaTest: 0.5,
+      side: THREE.DoubleSide,
     });
+  materials = new Array();
+  materials[0] = material;
+  materials[1] = material;
   
-  this.mesh = new THREE.Mesh( geometry, material );
+  var meshMaterial = new THREE.MeshFaceMaterial(materials);
+  this.mesh = new THREE.SkinnedMesh( geometry, meshMaterial );
 
 
 };

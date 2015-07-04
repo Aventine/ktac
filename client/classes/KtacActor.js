@@ -348,7 +348,7 @@ KtacActor.prototype.moveMeshTowardGoalPerFrame = function(delta) {
 
 KtacActor.prototype.showBubbleMessage = function(htmlMessage) {
 	var action = new KtacAction(htmlMessage);
-	action.setDuration(15);
+	action.setDuration(30);
 	this.queueAction(action);
 };
 
