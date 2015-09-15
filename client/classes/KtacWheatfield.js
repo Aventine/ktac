@@ -1,20 +1,19 @@
 function KtacWheatfield() {
+  KtacActor.call(this);
   
-  this.type = "Wheatfield";
-  KtacActor.call(this, this.type);
+  this.numStalks = 100;
   
   this.className = "KtacWheatfield";
-  
-  this.location = {x: 2, y: 0, z: 2};
-  this.scale = {x: 1, y: 1, z: 1};
+  this.name = "Wheatfield";
+
   this.graphicsJson = KTAC_CLIENT_LINK + "assets/Wheat/wheat2.json";
   this.texture = KTAC_CLIENT_LINK + "assets/Wheat/head.png";
   
-  this.blendAnims = [
-      
-  ];
+  this.meshGroup.setBoundingBox(new THREE.Vector3(0.4, 0.8, 0.4), new THREE.Vector3(0, 0.4, 0));
   
 } KtacWheatfield.prototype = Object.create(KtacActor.prototype);
+
+
 
 KtacWheatfield.prototype.onGraphicsLoaded = function(geometry, materials) {
   
@@ -40,13 +39,33 @@ KtacWheatfield.prototype.onGraphicsLoaded = function(geometry, materials) {
   materials[1] = material;
   
   var meshMaterial = new THREE.MeshFaceMaterial(materials);
-  this.mesh = new THREE.SkinnedMesh( geometry, meshMaterial );
+  var mesh = new THREE.SkinnedMesh( geometry, meshMaterial );
+  //this.mesh = mesh;
 
+  var ktacMesh = new KtacMesh(this, mesh);
+  this.meshGroup.addMesh(ktacMesh);
+
+  // additional randomly placed meshes
+  for (var i = 0; i < this.numStalks; i++) {
+    var offsetX = Math.random() * 0.8 - 0.4;
+    var offsetY = 0 - Math.random() * 0.2;
+    var offsetZ = Math.random() * 0.8 - 0.4;
+    var offsetPosition = new THREE.Vector3(offsetX, offsetY, offsetZ);
+    var anotherMesh = new THREE.SkinnedMesh( geometry, meshMaterial );
+    var anotherKtacMesh = new KtacMesh(this, anotherMesh);
+    anotherKtacMesh.setLocationOffset(offsetPosition);
+    
+    // rotate the stalk to face outward from the center
+    var theta = Math.atan2(offsetZ, offsetX); 
+    anotherKtacMesh.setlongitudeOffset(THREE.Math.radToDeg(theta));
+    
+    this.meshGroup.addMesh(anotherKtacMesh);
+  }
 
 };
 
-KtacWheatfield.prototype.onGraphicsReady = function() {
+/*KtacWheatfield.prototype.onGraphicsReady = function() {
   KtacActor.prototype.onGraphicsReady.call(this);
-  this.boundingBox.setScale({x: 0.8, y: 0.8, z: 0.8});
-  this.boundingBox.setOffset({x: 0, y: 0.4, z: 0});
-};
+
+  
+};*/

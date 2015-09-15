@@ -40,7 +40,7 @@ KtacBubble.prototype.updatePosition = function() {
 		return;
 	}
 	
-	screenLoc = KtacFunctions.toScreenXY(this.actor.mesh.position);
+	screenLoc = KtacFunctions.toScreenXY(this.actor.location);
 	screenLoc.x = screenLoc.x - (this.size.x / 2) + this.screenOffset.x;
 	screenLoc.y = screenLoc.y - this.size.y + this.screenOffset.y;
 	

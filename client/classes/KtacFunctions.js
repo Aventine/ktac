@@ -105,6 +105,10 @@ KtacFunctions.createBoundedWrapper = function(object, method) {
 
 // from https://github.com/mrdoob/three.js/issues/78
 KtacFunctions.toScreenXY = function(pos3D) {
+  if(!(pos3D instanceof THREE.Vector3)) {
+    pos3D = new THREE.Vector3(pos3D.x, pos3D.y, pos3D.z);
+  }
+  
   pos3D = pos3D.clone();
   var v = pos3D.project(camera);
   var percX = (v.x + 1) / 2;

@@ -333,7 +333,7 @@ Drupal.Nodejs.callbacks.ktacPushPacket = {
 			if (block == null) {
 
 				var block = new blockClass(packet.loc);
-				world1.addBlock(block);
+				block.spawn();
 			} else {
 				block.setTypeReplicated(blockClass);
 			}

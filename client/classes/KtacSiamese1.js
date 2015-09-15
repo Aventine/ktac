@@ -46,22 +46,23 @@ KtacSiamese1.prototype.onGraphicsLoaded = function(geometry, materials) {
 		shading : THREE.SmoothShading,
 		skinning: true,
 	});
-	this.mesh = new THREE.SkinnedMesh(geometry, catMaterial);
-	if(shadowsOn) {
-		this.mesh.castShadow = true;
-		this.mesh.receiveShadow = true;
-	}
-	this.loadAnimations(geometry.animations);
+	var mesh = new THREE.SkinnedMesh(geometry, catMaterial);
+  var ktacMesh = new KtacMesh(this, mesh);
+  this.meshGroup.addMesh(ktacMesh);
+
+	ktacMesh.loadAnimations(geometry.animations, this.blendAnims);
+	
+	this.meshGroup.setBoundingBox(new THREE.Vector3(0.3, 0.4, 0.6), new THREE.Vector3(0, 0.25, 0));
 };
 
 KtacSiamese1.prototype.onGraphicsReady = function() {
 	KtacActor.prototype.onGraphicsReady.call(this);
 	
 	
-	this.playAnimation("idle");
+	this.meshGroup.playAnimation("idle");
 	
-	this.boundingBox.setScale({x: 0.3, y: 0.4, z: 0.6});
-	this.boundingBox.setOffset({x: 0, y: 0.25, z: 0});
+	// this.boundingBox.setScale({x: 0.3, y: 0.4, z: 0.6});
+	// this.boundingBox.setOffset({x: 0, y: 0.25, z: 0});
 };
 
 KtacSiamese1.prototype.plantTree = function() {

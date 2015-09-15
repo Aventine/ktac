@@ -13,7 +13,7 @@ KtacLocation.prototype.clone = function() {
 KtacLocation.prototype.toString = function() {
 	var string = "(" + this.zone + ", " + this.x + ", " + this.y + ", " + this.z + ")";
 	return string;
-}
+};
 
 KtacLocation.prototype.equals = function(other) {
   if(this.zone == other.zone && 
@@ -23,4 +23,8 @@ KtacLocation.prototype.equals = function(other) {
     return true;
   }
   return false;
-}
+};
+
+KtacLocation.prototype.getVector3 = function() {
+  return new THREE.Vector3(this.x, this.y, this.z);
+};

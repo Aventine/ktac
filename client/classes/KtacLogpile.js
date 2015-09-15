@@ -10,6 +10,8 @@ function KtacLogpile() {
 	this.graphicsJson = KTAC_CLIENT_LINK + "assets/Logpile/logpile.json";
 	this.texture = KTAC_CLIENT_LINK + "assets/Logpile/bark.jpg";
 	
+	this.meshGroup.setBoundingBox(new THREE.Vector3(0.8, 0.8, 0.8), new THREE.Vector3(0, 0.4, 0));
+	
 	this.blendAnims = [
 			
 	];
@@ -34,15 +36,16 @@ KtacLogpile.prototype.onGraphicsLoaded = function(geometry, materials) {
 	    //wireframe: true,
 		});
 	
-	this.mesh = new THREE.Mesh( geometry, material );
+	var mesh = new THREE.Mesh( geometry, material );
+	this.meshGroup.addMesh(new KtacMesh(this, mesh));
 
 
 };
 
-KtacLogpile.prototype.onGraphicsReady = function() {
-	KtacActor.prototype.onGraphicsReady.call(this);
-	this.boundingBox.setScale({x: 0.8, y: 0.8, z: 0.8});
-	this.boundingBox.setOffset({x: 0, y: 0.4, z: 0});
-};
+// KtacLogpile.prototype.onGraphicsReady = function() {
+	// KtacActor.prototype.onGraphicsReady.call(this);
+	// this.boundingBox.setScale({x: 0.8, y: 0.8, z: 0.8});
+	// this.boundingBox.setOffset({x: 0, y: 0.4, z: 0});
+// };
 
 

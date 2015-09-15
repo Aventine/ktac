@@ -1,10 +1,8 @@
 function KtacTree1() {
-
-	this.type = "Tree1";
-	KtacActor.call(this, this.type);
+	KtacActor.call(this);
 	
 	this.className = "KtacTree1";
-
+  this.name = "Tree";
 	
 	this.location = {x: 2, y: 0, z: 2};
 	this.scale = {x: 0.5, y: 0.5, z: 0.5};
@@ -12,6 +10,9 @@ function KtacTree1() {
 	this.graphicsJson = KTAC_CLIENT_LINK + "assets/Tree2/tree2.js";
 	this.barkTextureFile = KTAC_CLIENT_LINK + "assets/Tree2/Tree Bark Tiled.png";
 	this.leavesTextureFile = KTAC_CLIENT_LINK + "assets/Tree2/Tree\ Leaves.png";
+	
+	this.meshGroup.setBoundingBox(new THREE.Vector3(0.8, 0.8, 0.8), new THREE.Vector3(0, 0.4, 0));
+	
 	this.blendAnims = [
 			
 	];
@@ -52,17 +53,18 @@ KtacTree1.prototype.onGraphicsLoaded = function(geometry, materials) {
 	materials[1] = barkMaterial;
 	
 	var materialTree = new THREE.MeshFaceMaterial(materials);
-	this.mesh = new THREE.SkinnedMesh(geometry, materialTree);
+	var mesh = new THREE.Mesh( geometry, materialTree );
+  this.meshGroup.addMesh(new KtacMesh(this, mesh));
 	
 	
 	
 };
 
-KtacTree1.prototype.onGraphicsReady = function() {
-	KtacActor.prototype.onGraphicsReady.call(this);
-	this.boundingBox.setScale({x: 0.8, y: 0.8, z: 0.8});
-	this.boundingBox.setOffset({x: 0, y: 0.4, z: 0});
-};
+// KtacTree1.prototype.onGraphicsReady = function() {
+	// KtacActor.prototype.onGraphicsReady.call(this);
+	// this.boundingBox.setScale({x: 0.8, y: 0.8, z: 0.8});
+	// this.boundingBox.setOffset({x: 0, y: 0.4, z: 0});
+// };
 
 
 

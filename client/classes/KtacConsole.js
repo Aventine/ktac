@@ -21,3 +21,7 @@ KtacConsole.prototype.outputMessage = function(message) {
     this.consoleElement.scrollTop(this.consoleElement[0].scrollHeight);
   }
 };
+
+KtacConsole.prototype.out = function(message) {
+  this.outputMessage(message);
+};

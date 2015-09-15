@@ -1,24 +1,32 @@
-// subclasses must call this.init() in their constructor
-
 function KtacBlock(loc) {
+  KtacActor.call(this);
   
-  this.name = "Terrain Cube";
-  
+  this.name = "Default Block";
+  this.scale = new THREE.Vector3(1, 1, 1);
+  this.offset = new THREE.Vector3(0, -0.5, 0);
+  this.texture = KTAC_CLIENT_LINK + "assets/Missing/missing.jpg";
+  this.graphicsJson = false;
   
   if(loc == undefined) {
     loc = new KtacLocation(0, 0, 0, 0);
   }
   this.location = loc;
-  
-  this.scale = {x: 1, y: 1, z: 1};
-  this.offset = {x: 0, y: -0.5, z: 0};
-  this.texture = KTAC_CLIENT_LINK + "assets/Missing/missing.jpg";
-  this.mesh = null;
-}
+
+  this.meshGroup.setBoundingBox(this.scale, this.offset);
+
+
+} KtacBlock.prototype = Object.create(KtacActor.prototype);
 
 KtacBlock.blockClassesById = new Array();
 
 KtacBlock.prototype.spawn = function() {
+  KtacActor.prototype.spawn.call(this);
+  
+  world1.addBlock(this);
+};
+
+KtacBlock.prototype.onGraphicsLoaded = function(geometry, materials) {
+  KtacActor.prototype.onGraphicsLoaded.call(this, geometry, materials);
   
   var imgTexture = THREE.ImageUtils.loadTexture(this.texture);
   imgTexture.repeat.set(1, 1);
@@ -33,16 +41,10 @@ KtacBlock.prototype.spawn = function() {
   });
   
   var geometry = new THREE.BoxGeometry(this.scale.x, this.scale.y, this.scale.z);
-  this.mesh = new THREE.Mesh(geometry, material2);
-  this.mesh.actor = this;
-  
-  scene1.add(this.mesh);
-  this.mesh.position.x = this.location.x + this.offset.x;
-  this.mesh.position.y = this.location.y + this.offset.y;
-  this.mesh.position.z = this.location.z + this.offset.z;
-  
-  world1.addBlock(this);
-  this.boundingBox = new KtacBoundingBox(this, {x: 1, y: 1, z: 1}, this.offset);
+  var mesh = new THREE.Mesh(geometry, material2);
+  var ktacMesh = new KtacMesh(this, mesh);
+  ktacMesh.setLocationOffset(this.offset);
+  this.meshGroup.addMesh(ktacMesh);
 };
 
 KtacBlock.prototype.setType = function(classToUse) {

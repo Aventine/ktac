@@ -1,5 +1,4 @@
 function KtacGrassBlock(loc) {
-
   KtacBlock.call(this, loc);
 
   this.className = "KtacGrassBlock";

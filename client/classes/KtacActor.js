@@ -3,13 +3,13 @@ var INIT_STATE_LOADING = "loading"; // ajax call for model/geometry/materials .j
 var INIT_STATE_LOADED = "loaded"; // ajax call completed
 var INIT_STATE_READY = "ready"; // all done and ready
 
-// subclasses must call this.init() in their constructor
 
-function KtacActor(name) {
+
+function KtacActor() {
 
   this.className = "KtacActor";
   this.id = 0;
-	this.name = name;
+	this.name = "Default KtacActor";
 	
 	this.location = new KtacLocation(0,0,0,0);
 	this.facingLongitude = 0; // in degrees
@@ -34,17 +34,27 @@ function KtacActor(name) {
 	this.meshGoalLocation = null; // where to move the mesh to each frame, to arrive at roughly the next tick
 	
 	this.toBeDeleted = false;
+	
+	this.meshGroup = new KtacMeshGroup(this);
 };
 
 KtacActor.actorClassesByTypeId = new Array();
 
 KtacActor.prototype.spawn = function() {
-	if(this.graphicsJson != null) {
+  //this.meshGroup.setLocation(this.location);
+  
+	if(this.graphicsJson != null && this.graphicsJson != false) {
 		var jsonLoader = new THREE.JSONLoader();
 
 		//jsonLoader.load(this.json, self.jsonLoaderCallback, this.texture);
 		this.initState = INIT_STATE_LOADING;
 		jsonLoader.load(this.graphicsJson, KtacFunctions.createBoundedWrapper(this, this.graphicsJsonLoaderCallback));
+	}
+	
+	// some things, like Blocks, don't need to load graphicsJson and have it set to false
+	if(this.graphicsJson === false) {
+	  this.initState = INIT_STATE_LOADING;
+	  this.graphicsJsonLoaderCallback();
 	}
 	
 	scene1.actors.push(this);
@@ -58,18 +68,7 @@ KtacActor.prototype.graphicsJsonLoaderCallback = function(geometry, materials) {
 	this.onGraphicsReady();
 };
 
-KtacActor.prototype.loadAnimations = function(geometryAnims) {
 
-	for(var i in this.blendAnims) {
-		var blendAnim = this.blendAnims[i];
-		var anim = new THREE.Animation(this.mesh, geometryAnims[blendAnim.blendIndex]);
-		this.animations[blendAnim.name] = anim;
-	}
-};
-
-KtacActor.prototype.playAnimation = function(animName) {
-	this.animations[animName].play();
-};
 
 KtacActor.prototype.setLocation = function(loc) {
 	if(!(loc instanceof KtacLocation)) {
@@ -77,27 +76,26 @@ KtacActor.prototype.setLocation = function(loc) {
 	}
 	this.location = loc;
 	
-	if(this.initState != INIT_STATE_READY) {
-		return;
-	}
+	this.meshGroup.setLocation(loc);
 	
-	this.mesh.position.x = loc.x;
-	this.mesh.position.y = loc.y;
-	this.mesh.position.z = loc.z;
-	this.boundingBox.setLocation(loc);
+	
+	
+	// if(this.initState != INIT_STATE_READY) {
+		// return;
+	// }
+	
+	// obsolete in favor of meshGroup
+	// if(this.mesh != undefined) {1
+  	// this.mesh.position.x = loc.x;
+  	// this.mesh.position.y = loc.y;
+  	// this.mesh.position.z = loc.z;
+  	// this.boundingBox.setLocation(loc);
+	// }
 };
 
 KtacActor.prototype.setScale = function(sca) {
 	this.scale = sca;
-	
-	if(this.initState != INIT_STATE_READY) {
-		return;
-	}
-	
-	this.mesh.scale.x = sca.x;
-	this.mesh.scale.y = sca.y;
-	this.mesh.scale.z = sca.z;
-	//this.boundingBox.setLocation(loc);
+	this.meshGroup.setScale(sca);
 };
 
 
@@ -120,8 +118,9 @@ KtacActor.prototype.moveToward = function(dest) {
 	var nextStep = KtacFunctions.getStepToward(here, dest, this.speed);
 
 	if (nextStep.x == dest.x && nextStep.z == dest.z) {
-		this.animations["walk"].stop();
-		this.animations["still"].play();
+	  this.stopAnimation("walk");
+	  this.playAnimation("still");
+
 		this.meshGoalLocation = null;
 		this.setLocation(dest);
 		this.goalLocation = null;
@@ -184,7 +183,7 @@ KtacActor.prototype.progressCurrentAction = function() {
 			
 			this.goalLocation = action.goalLocation;
 			
-			this.playAnimation("walk");
+			this.meshGroup.playAnimation("walk");
 			//this.isMoving = true;
 			
 			
@@ -246,17 +245,7 @@ KtacActor.prototype.lookAt = function(target) {
 		return;
 	}
 	
-	this.mesh.lookAt(target);
-	
-	//var axis = new THREE.Vector3(0,0,1);
-	//this.boundingBox.mesh.up = axis;
-	
-	this.boundingBox.lookAt(target);
-	
-//	this.boundingBox.mesh.rotation.x = this.mesh.rotation.x;
-//	this.boundingBox.mesh.rotation.y = this.mesh.rotation.y;
-//	this.boundingBox.mesh.rotation.z = this.mesh.rotation.z;
-	//this.boundingBox.mesh.updateMatrix();
+	this.meshGroup.lookAt(target);
 };
 
 //KtacActor.prototype.getMapTile = function() {
@@ -291,11 +280,23 @@ KtacActor.prototype.onGraphicsLoaded = function(geometry, materials) {
 
 KtacActor.prototype.onGraphicsReady = function() {
 	
-	this.mesh.actor = this;
-	this.boundingBox = new KtacBoundingBox(this, {x: 0.5, y: 0.5, z: 0.5}, {x: 0, y: 0.25, z: 0}); // provide a default bounding box
-	scene1.add(this.mesh);
+	
+	
+	// provide a default bounding box
+	// if(this.boundingBox == null) {
+	  // this.boundingBox = new KtacBoundingBox(this);
+	// }
+	
+	if(this.mesh != undefined) {
+	  this.mesh.actor = this; // obsolete style, use this.meshGroup instead
+	  scene1.add(this.mesh); // obsolete style, use this.meshGroup instead
+	}
 	
 	this.initState = INIT_STATE_READY;
+	
+	this.meshGroup.onGraphicsReady();
+	
+	
 	
 	this.setLocation(this.location);
 	this.setScale(this.scale);
@@ -305,18 +306,19 @@ KtacActor.prototype.onGraphicsReady = function() {
 		this.lookAt(this.lookTarget);
 	}
 	
-	var axis = new THREE.Vector3(0,1,0);
-	this.mesh.up = axis;
+	//this.resetUpwardAxis();
+	
 };
 
 
 KtacActor.prototype.getUuid = function() {
-	return this.mesh.uuid;
+	return this.meshGroup.getUuid();
 };
 
 KtacActor.prototype.frame = function(delta) {
-	
-	this.bubble.frame();
+	if(this.bubble != undefined) {
+	  this.bubble.frame();
+	}
 	this.moveMeshTowardGoalPerFrame(delta);
 };
 
@@ -332,18 +334,16 @@ KtacActor.prototype.moveMeshTowardGoalPerFrame = function(delta) {
 	
 	var percentToTravel = delta / secondsUntilTick;
 	
-	var nextStep = KtacFunctions.getPercentStepToward(this.mesh.position, this.meshGoalLocation, percentToTravel);
+	var nextStep = KtacFunctions.getPercentStepToward(this.location, this.meshGoalLocation, percentToTravel);
 
-	if(this.mesh.position.x == this.meshGoalLocation.x &&
-			this.mesh.position.y == this.meshGoalLocation.y &&
-			this.mesh.position.z == this.meshGoalLocation.z) {
+	if(this.location.x == this.meshGoalLocation.x &&
+			this.location.y == this.meshGoalLocation.y &&
+			this.location.z == this.meshGoalLocation.z) {
 		this.meshGoalLocation = null;
 		return;
 	}
 	
-	this.mesh.position.x = nextStep.x;
-	this.mesh.position.y = nextStep.y;
-	this.mesh.position.z = nextStep.z;
+	this.setLocation(nextStep);
 };
 
 KtacActor.prototype.showBubbleMessage = function(htmlMessage) {
@@ -410,7 +410,7 @@ KtacActor.prototype.destruct = function() {
   this.toBeDeleted = true;
 	scene1.remove(this.mesh);
 	KtacFunctions.removeFromArray(this, scene1.actors);
-	this.boundingBox.destruct();
+	this.meshGroup.destruct();
 	world1.removeActor(this);
   var packet = new KtacActorSavePacket(this);
   packet.send();
@@ -420,7 +420,7 @@ KtacActor.prototype.destructReplicated = function() {
   this.toBeDeleted = true;
   scene1.remove(this.mesh);
   KtacFunctions.removeFromArray(this, scene1.actors);
-  this.boundingBox.destruct();
+  this.meshGroup.destruct();
   world1.removeActor(this);
 };
 
@@ -460,11 +460,27 @@ KtacActor.getClassByTypeId = function(actorTypeId) {
 
 
 
+// KtacActor.prototype.resetUpwardAxis = function() {
+  // var axis = new THREE.Vector3(0,1,0);
+  // this.mesh.up = axis; // obsolete style, use this.meshes instead
+  // for(var i in this.meshes) {
+    // this.meshes[i].mesh.up = axis;
+  // }
+// };
 
 
+KtacActor.prototype.colorize = function(color) {
+  this.meshGroup.colorize(color);
+};
 
+KtacActor.prototype.getBoundingBox = function() {
+  return this.meshGroup.getBoundingBox();
+};
 
+KtacActor.prototype.playAnimation = function(animName) {
+  this.meshGroup.playAnimation(animName);
+};
 
-
-
-
+KtacActor.prototype.stopAnimation = function(animName) {
+  this.meshGroup.stopAnimation(animName);
+};
